@@ -1,0 +1,212 @@
+
+Images.png
+format: RGBA8888
+filter: MipMapLinearNearest,Linear
+repeat: none
+Facebook
+  rotate: false
+  xy: 2, 759
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+FacebookDown
+  rotate: false
+  xy: 2, 498
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+Logo
+  rotate: false
+  xy: 263, 759
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+LogoDown
+  rotate: false
+  xy: 2, 237
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+MoreGames1
+  rotate: false
+  xy: 263, 498
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+MoreGames1Down
+  rotate: false
+  xy: 524, 759
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+MoreGames2
+  rotate: false
+  xy: 263, 237
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+MoreGames2Down
+  rotate: false
+  xy: 524, 498
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+MoreGames3
+  rotate: false
+  xy: 524, 237
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+Close
+  rotate: false
+  xy: 2, 69
+  size: 163, 163
+  orig: 163, 163
+  offset: 0, 0
+  index: -1
+Bouton
+  rotate: false
+  xy: 785, 927
+  size: 88, 88
+  split: 43, 44, 43, 44
+  orig: 88, 88
+  offset: 0, 0
+  index: -1
+BoutonChecked
+  rotate: false
+  xy: 170, 144
+  size: 88, 88
+  split: 42, 45, 43, 44
+  orig: 88, 88
+  offset: 0, 0
+  index: -1
+BoutonInactif
+  rotate: false
+  xy: 785, 834
+  size: 88, 88
+  split: 43, 44, 43, 44
+  orig: 88, 88
+  offset: 0, 0
+  index: -1
+Balle
+  rotate: false
+  xy: 878, 940
+  size: 74, 75
+  orig: 74, 75
+  offset: 0, 0
+  index: -1
+BoutonInactifPetit
+  rotate: false
+  xy: 2, 10
+  size: 54, 54
+  split: 27, 26, 27, 26
+  orig: 54, 54
+  offset: 0, 0
+  index: -1
+BoutonPetit
+  rotate: false
+  xy: 170, 85
+  size: 54, 54
+  split: 27, 26, 27, 26
+  orig: 54, 54
+  offset: 0, 0
+  index: -1
+BoutonPetitChecked
+  rotate: false
+  xy: 263, 178
+  size: 54, 54
+  split: 27, 26, 25, 28
+  orig: 54, 54
+  offset: 0, 0
+  index: -1
+BoutonDebut
+  rotate: false
+  xy: 785, 775
+  size: 52, 54
+  split: 24, 27, 25, 28
+  orig: 52, 54
+  offset: 0, 0
+  index: -1
+BoutonDebutChecked
+  rotate: false
+  xy: 878, 881
+  size: 52, 54
+  split: 23, 28, 25, 28
+  orig: 52, 54
+  offset: 0, 0
+  index: -1
+imageTable
+  rotate: false
+  xy: 957, 990
+  size: 25, 25
+  split: 12, 12, 12, 12
+  orig: 25, 25
+  offset: 0, 0
+  index: -1
+Barre
+  rotate: false
+  xy: 61, 54
+  size: 10, 10
+  split: 5, 4, 5, 4
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+BoutonNotationChecked
+  rotate: false
+  xy: 61, 54
+  size: 10, 10
+  split: 5, 4, 4, 5
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+BoutonNotation
+  rotate: false
+  xy: 170, 70
+  size: 10, 10
+  split: 4, 5, 5, 4
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
+Fond
+  rotate: false
+  xy: 2, 2
+  size: 3, 3
+  split: 1, 1, 1, 1
+  orig: 3, 3
+  offset: 0, 0
+  index: -1
+
+Images2.png
+format: RGBA8888
+filter: MipMapLinearNearest,Linear
+repeat: none
+MoreGames3Down
+  rotate: false
+  xy: 2, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+Twitter
+  rotate: false
+  xy: 263, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
+TwitterDown
+  rotate: false
+  xy: 524, 2
+  size: 256, 256
+  orig: 256, 256
+  offset: 0, 0
+  index: -1
