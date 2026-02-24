@@ -74,6 +74,10 @@ This file summarizes the modernization and optimization pass applied to `Minimal
 - Back key now uses the same pause toggle path during gameplay.
 - Pause button bounds are recalculated on resize.
 - Pause button textures are explicitly disposed to avoid texture leaks.
+- Removed the startup cross-promo modal ("Try our new game !") from `MainMenuScreen`.
+- Updated Level Cleared UI in `TablesJeu`:
+- Secondary button text changed from Replay to Menu.
+- Secondary button now routes to `MainMenuScreen` instead of restarting the current level.
 
 ## Validation Performed
 - Built successfully with:
@@ -86,6 +90,10 @@ This file summarizes the modernization and optimization pass applied to `Minimal
 - `./gradlew :android:assembleDebug`
 - APK reinstall succeeded.
 - ADB launch/logcat smoke test was blocked by device authorization reset (`device unauthorized`) after daemon restart; runtime crash scan needs re-authorization on device.
+- Rebuilt after menu/popup update:
+- `./gradlew :android:assembleDebug`
+- Installed to device with `adb install -r` (`Success`).
+- Launched with `adb shell am start -n com.minimal.jezz.android/.AndroidLauncher`.
 
 ## Result
 - `Minimal-Jezz` now builds and runs with modern Android/libGDX toolchain.

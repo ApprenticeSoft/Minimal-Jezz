@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
@@ -23,7 +22,6 @@ import com.minimal.jezz.Couleurs;
 import com.minimal.jezz.Donnees;
 import com.minimal.jezz.MyGdxGame;
 import com.minimal.jezz.Variables;
-import com.minimal.jezz.table.NewGameAd;
 import com.minimal.jezz.table.TableNotation;
 
 public class MainMenuScreen implements Screen {
@@ -42,7 +40,6 @@ public class MainMenuScreen implements Screen {
     private TextButtonStyle textButtonStyle;
     private Couleurs couleur;
     private TableNotation tableNotation;
-    private NewGameAd cosmonautAd;
     private boolean listenersBound;
 
     public MainMenuScreen(final MyGdxGame gam) {
@@ -158,24 +155,6 @@ public class MainMenuScreen implements Screen {
             ));
         }
 
-        if (!Donnees.getPromoteCosmonaut()) {
-            if (Donnees.getRateCount() < 2 || Donnees.getNiveau() > 3) {
-                cosmonautAd = new NewGameAd(skin, "https://play.google.com/store/apps/details?id=com.cosmonaut.android");
-                LabelStyle labelStyle = new LabelStyle(game.assets.get("fontTextTableJeu.ttf", BitmapFont.class), Color.WHITE);
-                cosmonautAd.setLabelStyle(labelStyle);
-                cosmonautAd.setTextButtonStyle(textButtonStyle);
-                cosmonautAd.create(
-                        skin.getDrawable("imageTable"),
-                        "Images/CosmonautImage.png",
-                        0.85f * Gdx.graphics.getWidth(),
-                        0.65f * Gdx.graphics.getHeight(),
-                        game.langue.nouveauJeu,
-                        game.langue.jouer
-                );
-                cosmonautAd.setBackgroundColor(240 / 256f, 84 / 256f, 79 / 256f, 1);
-                cosmonautAd.addToStage(stage);
-            }
-        }
     }
 
     @Override
@@ -204,12 +183,6 @@ public class MainMenuScreen implements Screen {
             return;
         }
         listenersBound = true;
-
-        if (!Donnees.getPromoteCosmonaut()) {
-            if (Donnees.getRateCount() < 2 || Donnees.getNiveau() > 3) {
-                cosmonautAd.action();
-            }
-        }
 
         if (!Donnees.getRate() && Donnees.getRateCount() < 1) {
             tableNotation.action();

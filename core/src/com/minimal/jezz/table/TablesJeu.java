@@ -92,7 +92,7 @@ public class TablesJeu {
 		textButtonStyle.downFontColor = couleur2;
 		
 		nextBouton = new TextButton(game.langue.suivant, textButtonStyle);	
-		replayBouton = new TextButton(game.langue.rejouer, textButtonStyle);
+		replayBouton = new TextButton(game.langue.menu, textButtonStyle);
 		
 		labelStyle = new LabelStyle(game.assets.get("fontTextTableJeu.ttf", BitmapFont.class), Color.WHITE);
 	
@@ -283,7 +283,7 @@ public class TablesJeu {
 				}
 				
 				Variables.BOX_STEP = 1/60f;
-				game.setScreen(new GameScreen(game));
+				game.setScreen(new MainMenuScreen(game));
 			}
 		});
 		
