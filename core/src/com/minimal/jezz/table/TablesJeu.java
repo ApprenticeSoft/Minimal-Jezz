@@ -143,10 +143,11 @@ public class TablesJeu {
 		quitBouton = new TextButton(game.langue.quitter, textButtonStyle);
 		
 		tablePause = new Table();
+		float pauseButtonWidthMultiplier = Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.WebGL ? 2f : 1f;
 		if(Donnees.getLangue() == 2)
-			tablePause.defaults().height(Gdx.graphics.getHeight()/12).width(0.5f*glyphLayout.width).space(Gdx.graphics.getHeight()/100);
+			tablePause.defaults().height(Gdx.graphics.getHeight()/12).width(0.5f * glyphLayout.width * pauseButtonWidthMultiplier).space(Gdx.graphics.getHeight()/100);
 		else
-			tablePause.defaults().height(Gdx.graphics.getHeight()/12).width(0.75f*glyphLayout.width).space(Gdx.graphics.getHeight()/100);
+			tablePause.defaults().height(Gdx.graphics.getHeight()/12).width(0.75f * glyphLayout.width * pauseButtonWidthMultiplier).space(Gdx.graphics.getHeight()/100);
 		tablePause.add(resumeBouton).row();
 		tablePause.add(menuBouton).row();
 		tablePause.add(quitBouton).row();
