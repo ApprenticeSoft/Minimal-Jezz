@@ -81,6 +81,13 @@ This file summarizes the modernization and optimization pass applied to `Minimal
 - Updated Pause UI in `TablesJeu`:
 - Removed the Restart button from the pause menu.
 - Pause actions are now `Resume -> Menu -> Quit` with consistent row spacing and no empty gap.
+- Added a captured-zone render overdraw in `GameScreen`:
+- Each filled exclusion surface is expanded by 1px on all sides (with floor/ceil alignment) to remove visible HiDPI seams between adjacent zones.
+- Reduced runtime ball speed again by 10%:
+- `Balle` speed scale updated from `0.50` to `0.45`.
+- Updated Level Selection back-button placement in `NiveauxScreen`:
+- Bottom-left back button now uses ad-safe Y bounds based on banner height plus margin.
+- Added a fallback minimum Y floor (`12%` of screen height) for cases where banner height reports late/zero.
 
 ## Validation Performed
 - Built successfully with:
@@ -101,6 +108,10 @@ This file summarizes the modernization and optimization pass applied to `Minimal
 - `./gradlew :android:assembleDebug`
 - Installed to device with `adb install -r` (`Success`).
 - Launched with `adb shell am start -n com.minimal.jezz.android/.AndroidLauncher`.
+- Rebuilt after seam/speed/back-button updates:
+- `./gradlew :android:assembleDebug`
+- Installed to device with `adb install -r` (`Success`).
+- Relaunched with `adb shell am force-stop` + `adb shell am start -n com.minimal.jezz.android/.AndroidLauncher`.
 
 ## Result
 - `Minimal-Jezz` now builds and runs with modern Android/libGDX toolchain.
