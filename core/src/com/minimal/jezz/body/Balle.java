@@ -34,7 +34,7 @@ public class Balle extends CircleShape {
         this.camera = camera;
         rayon = camera.viewportWidth / 50f;
 
-        maxSpeed = Variables.vitesseBalle * GAMEPLAY_SPEED_SCALE * camera.viewportHeight;
+        maxSpeed = Variables.vitesseBalle * Variables.vitesseBalleScale * GAMEPLAY_SPEED_SCALE * camera.viewportHeight;
 
         bodyDef = new BodyDef();
         this.setRadius(rayon);
@@ -56,7 +56,7 @@ public class Balle extends CircleShape {
     }
 
     public void active() {
-        maxSpeed = Variables.vitesseBalle * GAMEPLAY_SPEED_SCALE * camera.viewportHeight;
+        maxSpeed = Variables.vitesseBalle * Variables.vitesseBalleScale * GAMEPLAY_SPEED_SCALE * camera.viewportHeight;
         vectorSpeed = body.getLinearVelocity();
         speed = vectorSpeed.len();
         if (speed > maxSpeed) {

@@ -23,6 +23,7 @@ import com.minimal.jezz.Donnees;
 import com.minimal.jezz.Variables;
 import com.minimal.jezz.screen.MainMenuScreen;
 import com.minimal.jezz.MyGdxGame;
+import com.minimal.jezz.ui.UiActorUtils;
 
 public class OptionScreen implements Screen{
 
@@ -41,10 +42,12 @@ public class OptionScreen implements Screen{
 	private boolean langueActif, sonActif;
 	private Couleurs couleur;
 	private boolean listenersBound;
+	private final boolean webBuild;
 
 	public OptionScreen(final MyGdxGame gam){
 		game = gam;
 		listenersBound = false;
+		webBuild = Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.WebGL;
 		
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -89,7 +92,7 @@ public class OptionScreen implements Screen{
 		boutonHeight = 18*Gdx.graphics.getWidth()/100;
 		boutonEcart = boutonHeight + Gdx.graphics.getHeight()/50;
 		
-		//Menu général
+		//Menu gÃ©nÃ©ral
 		langueBouton = new TextButton(gam.langue.langage.toUpperCase(), menuButtonStyle);
 		langueBouton.setWidth(boutonWidth);
 		langueBouton.setHeight(boutonHeight);
@@ -116,6 +119,10 @@ public class OptionScreen implements Screen{
 		else
 			rateBouton.setX(-Gdx.graphics.getWidth());
 		rateBouton.setY(moreAppsBouton.getY() - boutonEcart);
+		if (webBuild) {
+			moreAppsBouton.setX(-Gdx.graphics.getWidth());
+			rateBouton.setX(-Gdx.graphics.getWidth());
+		}
 		
 		retourBouton = new TextButton("<", menuButtonStyle);
 		retourBouton.setWidth(Gdx.graphics.getWidth()/7);
@@ -124,8 +131,8 @@ public class OptionScreen implements Screen{
 		retourBouton.setY(Gdx.graphics.getWidth()/10);
 		//Menu langue
 		englishBouton = new TextButton("English", optionButtonStyle);
-		francaisBouton = new TextButton("Français", optionButtonStyle);
-		espanolBouton = new TextButton("Español", optionButtonStyle);	
+		francaisBouton = new TextButton("FranÃ§ais", optionButtonStyle);
+		espanolBouton = new TextButton("EspaÃ±ol", optionButtonStyle);	
 		langueGroupe = new ButtonGroup<TextButton>();
 		langueGroupe.add(englishBouton);
 		langueGroupe.add(francaisBouton);
@@ -133,8 +140,8 @@ public class OptionScreen implements Screen{
 		langueGroupe.setMinCheckCount(1);
 		langueGroupe.setMaxCheckCount(1);
 		//Menu son
-		onBouton = new TextButton(gam.langue.activé, optionButtonStyle);
-		offBouton = new TextButton(gam.langue.désactivé, optionButtonStyle);	
+		onBouton = new TextButton(gam.langue.active, optionButtonStyle);
+		offBouton = new TextButton(gam.langue.desactive, optionButtonStyle);	
 		sonGroupe = new ButtonGroup<TextButton>();
 		sonGroupe.add(onBouton);
 		sonGroupe.add(offBouton);
@@ -151,7 +158,7 @@ public class OptionScreen implements Screen{
 		englishBouton.setVisible(false);
 		espanolBouton.setVisible(false);
 		
-		//Transition entre les écrans
+		//Transition entre les Ã©crans
 		transitionImage = new Image(skin.getDrawable("Barre"));
 		transitionImage.setWidth(Gdx.graphics.getWidth());
 		transitionImage.setHeight(Gdx.graphics.getHeight());
@@ -268,6 +275,9 @@ public class OptionScreen implements Screen{
 		Gdx.input.setInputProcessor(stage);
 		Gdx.input.setCatchKey(Keys.BACK, true);
 		game.actionResolver.showBanner();
+		if (webBuild) {
+			UiActorUtils.centerTextButtons(stage.getRoot());
+		}
 		if (listenersBound) {
 			return;
 		}
@@ -295,7 +305,7 @@ public class OptionScreen implements Screen{
 					englishBouton.addAction(Actions.sequence(Actions.moveTo(Gdx.graphics.getWidth()/2 - 1.6f*francaisBouton.getWidth()/* - boutonEcart*/, langueY, 0, Interpolation.exp5Out), Actions.alpha(1, 0.35f)));
 					espanolBouton.addAction(Actions.sequence(Actions.moveTo(Gdx.graphics.getWidth()/2 + 0.6f*francaisBouton.getWidth()/* + boutonEcart*/, langueY, 0, Interpolation.exp5Out), Actions.alpha(1, 0.35f)));
 				}
-				//Fermeture des menus non utilisés			
+				//Fermeture des menus non utilisÃ©s			
 				else if(!langueActif && sonActif){
 					sonActif = false;
 					langueActif = true;
@@ -326,7 +336,7 @@ public class OptionScreen implements Screen{
 					onBouton.addAction(Actions.sequence(Actions.moveTo(sonBouton.getX() - boutonEcart/4, sonY, 0, Interpolation.exp5Out), Actions.alpha(1, 0.35f)));
 					offBouton.addAction(Actions.sequence(Actions.moveTo(sonBouton.getX() + boutonEcart/4 + sonBouton.getWidth() - offBouton.getWidth(), sonY, 0, Interpolation.exp5Out), Actions.alpha(1, 0.35f)));
 				}
-				//Fermeture des menus non utilisés
+				//Fermeture des menus non utilisÃ©s
 				else if(!sonActif && langueActif){
 					langueActif = false;
 					sonActif = true;
@@ -340,22 +350,24 @@ public class OptionScreen implements Screen{
 			}
 		});
 		
-		rateBouton.addListener(new ClickListener(){
-			@Override
-			public void clicked(InputEvent event, float x, float y){
-				Donnees.setRate(true);
-		       	Gdx.net.openURI(Variables.GOOGLE_PLAY_GAME_URL);
-		       	//Gdx.net.openURI(Variables.AMAZON_GAME_URL);
-			}
-		});
-		
-		moreAppsBouton.addListener(new ClickListener(){
-			@Override
-			public void clicked(InputEvent event, float x, float y){
-		       	Gdx.net.openURI(Variables.GOOGLE_PLAY_STORE_URL);
-		        //Gdx.net.openURI(Variables.AMAZON_STORE_URL);
-			}
-		});
+		if (!webBuild) {
+			rateBouton.addListener(new ClickListener(){
+				@Override
+				public void clicked(InputEvent event, float x, float y){
+					Donnees.setRate(true);
+		        	Gdx.net.openURI(Variables.GOOGLE_PLAY_GAME_URL);
+		        	//Gdx.net.openURI(Variables.AMAZON_GAME_URL);
+				}
+			});
+			
+			moreAppsBouton.addListener(new ClickListener(){
+				@Override
+				public void clicked(InputEvent event, float x, float y){
+		        	Gdx.net.openURI(Variables.GOOGLE_PLAY_STORE_URL);
+		         //Gdx.net.openURI(Variables.AMAZON_STORE_URL);
+				}
+			});
+		}
 		
 		retourBouton.addListener(new ClickListener(){
 			@Override
@@ -418,8 +430,8 @@ public class OptionScreen implements Screen{
 		rateBouton.setText(game.langue.noter.toUpperCase());
 		moreAppsBouton.setText(game.langue.plusDApp.toUpperCase());
 		sonBouton.setText(game.langue.sons.toUpperCase()); 
-		onBouton.setText(game.langue.activé);
-		offBouton.setText(game.langue.désactivé);
+		onBouton.setText(game.langue.active);
+		offBouton.setText(game.langue.desactive);
 	}
 	
 	@Override

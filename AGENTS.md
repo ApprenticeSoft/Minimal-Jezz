@@ -117,3 +117,70 @@ This file summarizes the modernization and optimization pass applied to `Minimal
 - `Minimal-Jezz` now builds and runs with modern Android/libGDX toolchain.
 - Legacy billing and old ad implementation are removed.
 - Modern banner/interstitial ad flow is in place and integrated with gameplay states.
+
+## HTML/Web Version (Raspberry Pi)
+- Added a dedicated `:html` (GWT) module for web deployment.
+- Added GWT module descriptors:
+  - `core/src/com/minimal/jezz/JezzCore.gwt.xml`
+  - `html/src/com/minimal/jezz/GdxDefinition.gwt.xml`
+- Added web launcher and action resolver no-op bridge:
+  - `html/src/com/minimal/jezz/client/HtmlLauncher.java`
+- Added web dist pipeline:
+  - `./gradlew :html:dist`
+  - outputs `html/build/dist`
+- Added build-time font atlas generation with free scalable fonts:
+  - `Noto Sans` -> `Fonts/web_ui.fnt/png`
+  - `Bebas Neue` -> `Fonts/web_title.fnt/png`
+  - generator: `html/src/com/minimal/jezz/tools/FontAtlasGenerator.java`
+- Added web super-source loading override:
+  - `html/src/com/minimal/jezz/supersrc/com/minimal/jezz/screen/LoadingScreen.java`
+  - maps in-game font keys to generated web atlases with linear filtering and non-integer glyph placement.
+- Web viewport/layout behavior:
+  - fixed portrait ratio (`9/16`) with full browser height and centered black side bars.
+  - no width-stretching to full browser width.
+
+## Web-Only Gameplay/UI Behavior Parity with Brick
+- Added WebGL detection in gameplay flow and web-only speed scale:
+  - `Variables.vitesseBalleScale` added.
+  - Web build sets speed multiplier to `1.5x` in `GameScreen`.
+  - `Balle` speed cap now uses `vitesseBalle * vitesseBalleScale`.
+- Removed visible pause button on web:
+  - pause button is not created for WebGL.
+  - pause/resume toggles on `Esc`, `Space`, `P`.
+  - Android keeps existing `BACK` pause behavior.
+- Removed web store/rating prompts from active flow:
+  - Main menu rating popup/action disabled on web.
+  - Rate/More Apps actions disabled on web in options flow.
+- Added autoplay-safe menu music behavior for web:
+  - `MyGdxGame.ensureMenuMusic()` and capture-listener retry on user interaction.
+- Added explicit button label centering for web:
+  - `core/src/com/minimal/jezz/ui/UiActorUtils.java`
+  - recursively centers labels horizontally and vertically for all `TextButton` actors.
+
+## Encoding/Build Compatibility for Web
+- Converted legacy ISO-8859-1 sources used by Jezz UI path to UTF-8 where needed for GWT compatibility.
+- Updated `core/build.gradle` source encoding to `UTF-8`.
+- Renamed non-ASCII `Langue` field identifiers to ASCII-safe names:
+  - `activé` -> `active`
+  - `désactivé` -> `desactive`
+  - updated all call sites.
+
+## Web Deploy Targets
+- Deployed Brick dist to:
+  - `/home/marc/apps/brick-breaker-web/`
+  - `/var/www/brick/`
+- Deployed Jezz dist to:
+  - `/home/marc/apps/jezz-web/`
+  - `/var/www/jezz/`
+- Added Apache vhosts:
+  - `/etc/apache2/sites-available/brick.marcvidal.ca.conf`
+  - `/etc/apache2/sites-available/jezz.marcvidal.ca.conf`
+  - both enabled and Apache config validated/reloaded.
+
+## TLS Status
+- Existing cert (`/etc/letsencrypt/live/nuage.marcvidal.ca`) currently covers:
+  - `chat.marcvidal.ca`, `lab.marcvidal.ca`, `nuage.marcvidal.ca`
+- Attempted to expand cert to include:
+  - `brick.marcvidal.ca`, `jezz.marcvidal.ca`
+- Let’s Encrypt challenge failed for both new domains with external connection-validation errors.
+- Result: HTTPS vhosts are configured and serving content, but certificate SAN update for the two new hostnames is still pending DNS/network validation readiness.

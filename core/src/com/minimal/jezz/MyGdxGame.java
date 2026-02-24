@@ -58,6 +58,17 @@ public class MyGdxGame extends Game implements ApplicationListener {
         hauteurBanniere = actionResolver.getBannerHeightPx();
     }
 
+    public void ensureMenuMusic() {
+        if (!Donnees.getSon() || music.isPlaying()) {
+            return;
+        }
+        try {
+            music.play();
+        } catch (Exception ignored) {
+            // Web browsers can block autoplay until first user interaction.
+        }
+    }
+
     public void dispose() {
         if (getScreen() != null) {
             getScreen().dispose();

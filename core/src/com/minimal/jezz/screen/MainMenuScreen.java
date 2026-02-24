@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -23,6 +24,7 @@ import com.minimal.jezz.Donnees;
 import com.minimal.jezz.MyGdxGame;
 import com.minimal.jezz.Variables;
 import com.minimal.jezz.table.TableNotation;
+import com.minimal.jezz.ui.UiActorUtils;
 
 public class MainMenuScreen implements Screen {
 
@@ -41,15 +43,15 @@ public class MainMenuScreen implements Screen {
     private Couleurs couleur;
     private TableNotation tableNotation;
     private boolean listenersBound;
+    private final boolean webBuild;
 
     public MainMenuScreen(final MyGdxGame gam) {
         game = gam;
         listenersBound = false;
+        webBuild = Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.WebGL;
         Variables.pause = true;
 
-        if (!game.music.isPlaying()) {
-            game.music.play();
-        }
+        game.ensureMenuMusic();
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -100,7 +102,10 @@ public class MainMenuScreen implements Screen {
         moreAppsBouton.setHeight(Gdx.graphics.getHeight() / 11f);
         moreAppsBouton.setY(optionBouton.getY() - 1.1f * rateBouton.getHeight());
 
-        if (!Donnees.getRate()) {
+        if (webBuild) {
+            rateBouton.setX(-Gdx.graphics.getWidth());
+            moreAppsBouton.setX(-Gdx.graphics.getWidth());
+        } else if (!Donnees.getRate()) {
             rateBouton.setX(startBouton.getX());
             moreAppsBouton.setX(-Gdx.graphics.getWidth());
         } else {
@@ -122,12 +127,22 @@ public class MainMenuScreen implements Screen {
         stage.addActor(moreAppsBouton);
         stage.addActor(transitionImage);
 
-        if (!Donnees.getRate() && Donnees.getRateCount() < 1) {
+        if (!webBuild && !Donnees.getRate() && Donnees.getRateCount() < 1) {
             tableNotation = new TableNotation(game, skin);
             tableNotation.draw(stage);
         }
 
-        if (!Donnees.getRate()) {
+        if (webBuild) {
+            startBouton.addAction(Actions.parallel(
+                    Actions.alpha(0),
+                    Actions.addAction(Actions.alpha(0), optionBouton)
+            ));
+            startBouton.addAction(Actions.sequence(
+                    Actions.delay(0.1f),
+                    Actions.alpha(1, 0.1f),
+                    Actions.addAction(Actions.alpha(1, 0.1f), optionBouton)
+            ));
+        } else if (!Donnees.getRate()) {
             startBouton.addAction(Actions.parallel(
                     Actions.alpha(0),
                     Actions.addAction(Actions.alpha(0), optionBouton),
@@ -159,6 +174,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        game.ensureMenuMusic();
         Gdx.gl.glClearColor(couleur.getCouleur2().r, couleur.getCouleur2().g, couleur.getCouleur2().b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -179,12 +195,22 @@ public class MainMenuScreen implements Screen {
     public void show() {
         Gdx.input.setInputProcessor(stage);
         game.actionResolver.showBanner();
+        if (webBuild) {
+            UiActorUtils.centerTextButtons(stage.getRoot());
+        }
+        stage.addCaptureListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                game.ensureMenuMusic();
+                return false;
+            }
+        });
         if (listenersBound) {
             return;
         }
         listenersBound = true;
 
-        if (!Donnees.getRate() && Donnees.getRateCount() < 1) {
+        if (!webBuild && !Donnees.getRate() && Donnees.getRateCount() < 1) {
             tableNotation.action();
         }
 
@@ -211,20 +237,22 @@ public class MainMenuScreen implements Screen {
             }
         });
 
-        rateBouton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Donnees.setRate(true);
-                Gdx.net.openURI(Variables.GOOGLE_PLAY_GAME_URL);
-            }
-        });
+        if (!webBuild) {
+            rateBouton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    Donnees.setRate(true);
+                    Gdx.net.openURI(Variables.GOOGLE_PLAY_GAME_URL);
+                }
+            });
 
-        moreAppsBouton.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Gdx.net.openURI(Variables.GOOGLE_PLAY_STORE_URL);
-            }
-        });
+            moreAppsBouton.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    Gdx.net.openURI(Variables.GOOGLE_PLAY_STORE_URL);
+                }
+            });
+        }
     }
 
     @Override

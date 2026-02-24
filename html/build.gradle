@@ -1,0 +1,111 @@
+apply plugin: "java"
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+sourceSets.main.java.srcDirs = ["src/"]
+
+configurations {
+    gwtCompiler
+}
+
+dependencies {
+    implementation project(":core")
+
+    implementation "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
+    implementation "org.gwtproject:gwt-user:2.11.0"
+
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
+    implementation "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
+    implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources"
+    implementation "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion:sources"
+    gwtCompiler "org.gwtproject:gwt-dev:2.11.0"
+}
+
+tasks.register("compileGwt", JavaExec) {
+    group = "build"
+    description = "Compile GWT application"
+
+    dependsOn(":core:classes", classes)
+
+    mainClass = "com.google.gwt.dev.Compiler"
+    jvmArgs = ["-Xmx2G"]
+
+    classpath = files(
+            configurations.gwtCompiler,
+            sourceSets.main.runtimeClasspath,
+            file("src"),
+            file("../core/src")
+    )
+
+    args = [
+            "-war", "$buildDir/gwt/out",
+            "-style", "OBF",
+            "-logLevel", "INFO",
+            "-localWorkers", "1",
+            "com.minimal.jezz.GdxDefinition"
+    ]
+}
+
+tasks.named("compileGwt") {
+    dependsOn("generateWebFonts")
+}
+
+tasks.register("generateWebFonts", JavaExec) {
+    group = "build"
+    description = "Generate high-resolution web bitmap fonts from free TTF files"
+    dependsOn(classes)
+
+    mainClass = "com.minimal.jezz.tools.FontAtlasGenerator"
+    jvmArgs = ["-Djava.awt.headless=true"]
+    classpath = sourceSets.main.runtimeClasspath
+
+    args = [
+            "${projectDir}/../android/assets/Fonts/NotoSans-Regular.ttf",
+            "${projectDir}/../android/assets/Fonts",
+            "web_ui",
+            "96",
+            "2",
+            "4096",
+            "${projectDir}/../android/assets/Fonts/BebasNeue-Regular.ttf",
+            "${projectDir}/../android/assets/Fonts",
+            "web_title",
+            "140",
+            "2",
+            "4096"
+    ]
+}
+
+tasks.register("dist") {
+    group = "build"
+    description = "Build distributable HTML package"
+    dependsOn("compileGwt")
+
+    doLast {
+        def distDir = file("$buildDir/dist")
+        delete distDir
+        distDir.mkdirs()
+
+        copy {
+            from "$buildDir/gwt/out"
+            into distDir
+        }
+
+        copy {
+            from "webapp"
+            into distDir
+            exclude "WEB-INF/**"
+        }
+
+        copy {
+            from "war/assets"
+            into "$distDir/assets"
+        }
+    }
+}

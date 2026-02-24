@@ -23,6 +23,7 @@ public class Variables {
 
     // Ball properties
     public static float vitesseBalle = 0.7f;
+    public static float vitesseBalleScale = 1f;
 
     // Bar drawing/gameplay
     public static boolean spawn = false;

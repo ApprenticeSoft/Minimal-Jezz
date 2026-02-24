@@ -28,6 +28,7 @@ import com.minimal.jezz.Couleurs;
 import com.minimal.jezz.Donnees;
 import com.minimal.jezz.MyGdxGame;
 import com.minimal.jezz.Variables;
+import com.minimal.jezz.ui.UiActorUtils;
 
 public class NiveauxScreen implements Screen {
 
@@ -166,6 +167,9 @@ public class NiveauxScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchKey(Keys.BACK, true);
         game.actionResolver.showBanner();
+        if (Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.WebGL) {
+            UiActorUtils.centerTextButtons(stage.getRoot());
+        }
 
         if (listenersBound) {
             return;

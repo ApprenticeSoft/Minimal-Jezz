@@ -5,7 +5,7 @@ public class Langue {
 	public String commencer, options, noter, removeAds,
 					langage, vitesse, sons, plusDApp,
 					lent, normal, rapide,
-					activÈ, dÈsactivÈ,
+					active, desactive,
 					groupe, niveau, 
 					choisirNiveau,
 					balles, objectif,
@@ -33,8 +33,8 @@ public class Langue {
 			lent = "Slow";
 			normal = "Normal";
 			rapide = "Fast";
-			activÈ = "On";
-			dÈsactivÈ = "Off";
+			active = "On";
+			desactive = "Off";
 			groupe = "Group";
 			niveau = "Level";
 			choisirNiveau = "Choose a level";
@@ -59,7 +59,7 @@ public class Langue {
 			jouer = "Play";
 			nouveauJeu = "Try our new game !";
 			break;
-		case 2:								//FranÁais
+		case 2:								//Fran√ßais
 			commencer = "Jouer";
 			options = "Options";
 			noter = "Noter";
@@ -70,8 +70,8 @@ public class Langue {
 			lent = "Lent";
 			normal = "Normal";
 			rapide = "Rapide";
-			activÈ = "ActivÈ";
-			dÈsactivÈ = "DÈsactivÈ";
+			active = "Activ√©";
+			desactive = "D√©sactiv√©";
 			groupe = "Groupe";
 			niveau = "Niveau";
 			choisirNiveau = "Chosissez\nun niveau";
@@ -81,13 +81,13 @@ public class Langue {
 			recommencer = "Recommencer";
 			menu = "Menu";
 			quitter =  "Quitter";
-			niveauComplete = "Niveau TerminÈ";
+			niveauComplete = "Niveau Termin√©";
 			suivant = "Suivant";
 			rejouer = "Rejouer";
 			fini = "Fini";
-			debloque = "DÈbloquÈ";
+			debloque = "D√©bloqu√©";
 			perdu = "Vous avez perdu !";
-			jeuComplete = "Jeu TerminÈ !";
+			jeuComplete = "Jeu Termin√© !";
 			textNotation = "Vous aimez\nMINIMAL JEZZ ?\nVoulez vous le noter ?";
 			oui = "OUI";
 			plusTard = "PLUS\nTARD";
@@ -103,12 +103,12 @@ public class Langue {
 			langage = "Idioma";
 			vitesse = "Velocidad";
 			sons = "Sonido";
-			plusDApp = "M·s Apps";
+			plusDApp = "M√°s Apps";
 			lent = "Lento";
 			normal = "Normal";
-			rapide = "R·pido";
-			activÈ = "Encendido";
-			dÈsactivÈ = "Apagado";
+			rapide = "R√°pido";
+			active = "Encendido";
+			desactive = "Apagado";
 			groupe = "Grupo";
 			niveau = "Nivel";
 			choisirNiveau = "Seleccione\nun nivel";
@@ -116,7 +116,7 @@ public class Langue {
 			objectif = "Objetivo";
 			reprendre = "Continuar";
 			recommencer = "Reiniciar";
-			menu = "Men˙";
+			menu = "Men√∫";
 			quitter =  "Salir";
 			niveauComplete = "Nivel Completado";
 			suivant = "Siguiente";
@@ -125,9 +125,9 @@ public class Langue {
 			debloque = "Desbloqueado";
 			perdu = "Has perdido !";
 			jeuComplete = "Juego Completado !";
-			textNotation = "øTe gusta\nMINIMAL JEZZ?\nøLe eval˙e?";
-			oui = "SÕ";
-			plusTard = "M¡S\nTARDE";
+			textNotation = "¬øTe gusta\nMINIMAL JEZZ?\n¬øLe eval√∫e?";
+			oui = "S√ç";
+			plusTard = "M√ÅS\nTARDE";
 			jamais = "NUNCA";
 			removeAds = "Eliminar\nAnuncios";
 			jouer = "Jugar";

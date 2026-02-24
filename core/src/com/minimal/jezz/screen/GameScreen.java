@@ -46,6 +46,7 @@ import com.minimal.jezz.body.Barre;
 import com.minimal.jezz.enums.EtatBarre;
 import com.minimal.jezz.enums.EtatPoint;
 import com.minimal.jezz.table.TablesJeu;
+import com.minimal.jezz.ui.UiActorUtils;
 
 public class GameScreen extends InputAdapter implements Screen {
 
@@ -86,12 +87,17 @@ public class GameScreen extends InputAdapter implements Screen {
     private boolean listenersBound;
     private boolean adBreakSent;
     private boolean bannerVisible;
+    private final boolean webBuild;
+    private final boolean showPauseButton;
 
     public GameScreen(final MyGdxGame gam) {
         game = gam;
         listenersBound = false;
         adBreakSent = false;
         bannerVisible = false;
+        webBuild = Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.WebGL;
+        showPauseButton = !webBuild;
+        Variables.vitesseBalleScale = webBuild ? 1.5f : 1f;
 
         camera = new OrthographicCamera();
         camera.viewportHeight = Gdx.graphics.getHeight() * Variables.WORLD_TO_BOX;
@@ -177,12 +183,14 @@ public class GameScreen extends InputAdapter implements Screen {
         pauseButtonStyle.fontColor = Color.WHITE;
         pauseButtonStyle.downFontColor = new Color(0.27f, 0.695f, 0.613f, 1);
 
-        pauseBouton = new TextButton("II", pauseButtonStyle);
-        pauseBouton.setWidth((Gdx.graphics.getWidth() / 16f) * 1.3f);
-        pauseBouton.setHeight(pauseBouton.getWidth());
-        pauseBouton.setVisible(false);
-        updatePauseButtonBounds();
-        stage.addActor(pauseBouton);
+        if (showPauseButton) {
+            pauseBouton = new TextButton("II", pauseButtonStyle);
+            pauseBouton.setWidth((Gdx.graphics.getWidth() / 16f) * 1.3f);
+            pauseBouton.setHeight(pauseBouton.getWidth());
+            pauseBouton.setVisible(false);
+            updatePauseButtonBounds();
+            stage.addActor(pauseBouton);
+        }
     }
 
     @Override
@@ -263,9 +271,11 @@ public class GameScreen extends InputAdapter implements Screen {
             }
         }
 
-        pauseBouton.setVisible(canTogglePause());
+        if (pauseBouton != null) {
+            pauseBouton.setVisible(canTogglePause());
+        }
 
-        if (Gdx.input.isKeyJustPressed(Keys.BACK) && vies > 0) {
+        if (vies > 0 && isPauseTogglePressed()) {
             if (Variables.debut || Variables.gagne) {
                 game.setScreen(new MainMenuScreen(game));
             } else {
@@ -329,6 +339,12 @@ public class GameScreen extends InputAdapter implements Screen {
     @Override
     public void show() {
         Gdx.input.setCatchKey(Keys.BACK, true);
+        if (webBuild) {
+            Gdx.input.setCatchKey(Keys.ESCAPE, true);
+            Gdx.input.setCatchKey(Keys.SPACE, true);
+            Gdx.input.setCatchKey(Keys.P, true);
+            UiActorUtils.centerTextButtons(stage.getRoot());
+        }
 
         if (!listenersBound) {
             inputMultiplexer.addProcessor(new GestureDetector(gestureListener));
@@ -414,14 +430,16 @@ public class GameScreen extends InputAdapter implements Screen {
 
             tablesJeu.boutonListener(world, barres);
 
-            pauseBouton.addListener(new ClickListener() {
-                @Override
-                public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
-                    if (canTogglePause()) {
-                        togglePause();
+            if (showPauseButton && pauseBouton != null) {
+                pauseBouton.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                        if (canTogglePause()) {
+                            togglePause();
+                        }
                     }
-                }
-            });
+                });
+            }
 
             listenersBound = true;
         }
@@ -508,6 +526,15 @@ public class GameScreen extends InputAdapter implements Screen {
         } else {
             tablesJeu.pause();
         }
+    }
+
+    private boolean isPauseTogglePressed() {
+        if (webBuild) {
+            return Gdx.input.isKeyJustPressed(Keys.ESCAPE)
+                    || Gdx.input.isKeyJustPressed(Keys.SPACE)
+                    || Gdx.input.isKeyJustPressed(Keys.P);
+        }
+        return Gdx.input.isKeyJustPressed(Keys.BACK);
     }
 
     private void updatePauseButtonBounds() {

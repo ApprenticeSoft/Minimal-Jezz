@@ -41,7 +41,7 @@ public class TablesJeu {
 	public TablesJeu(final MyGdxGame game, Stage stage, Skin skin, LevelHandler levelHandler, Color couleur1, Color couleur2){
 		this.game = game;
 		
-		 //Début du jeu
+		 //DÃ©but du jeu
         textButtonStyleDebut = new TextButtonStyle();
         if(Gdx.graphics.getHeight() >= 1000){
 			textButtonStyleDebut.up = skin.getDrawable("BoutonDebut");

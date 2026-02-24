@@ -8,7 +8,7 @@ java {
     }
 }
 
-[compileJava, compileTestJava]*.options*.encoding = "ISO-8859-1"
+[compileJava, compileTestJava]*.options*.encoding = "UTF-8"
 
 sourceSets.main.java.srcDirs = ["src/"]
 

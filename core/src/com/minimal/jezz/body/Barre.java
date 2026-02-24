@@ -141,7 +141,7 @@ public class Barre extends PolygonShape{
 		    		contactMur2 = contactInit;
 		        }	
 		        else if(contactInit != contactMur1){
-		        	System.out.println("Contact bas raté !!!!");
+		        	System.out.println("Contact bas ratÃ© !!!!");
 		        }
 			}
 			else if(etatBarre == EtatBarre.contactBas){
@@ -159,7 +159,7 @@ public class Barre extends PolygonShape{
 		    		contactMur2 = contactInit;
 		        }	
 		        else if(contactInit != contactMur1){
-		        	System.out.println("Contact haut raté !!!!");
+		        	System.out.println("Contact haut ratÃ© !!!!");
 		        }
 			}
 			else if(etatBarre == EtatBarre.contactDouble){
@@ -241,7 +241,7 @@ public class Barre extends PolygonShape{
 		    		contactMur2 = contactInit;
 		        }	
 		        else if(contactInit != contactMur1){
-		        	System.out.println("Contact bas raté !!!!");
+		        	System.out.println("Contact bas ratÃ© !!!!");
 		        }
 			}
 			else if(etatBarre == EtatBarre.contactGauche){
@@ -259,7 +259,7 @@ public class Barre extends PolygonShape{
 		    		contactMur2 = contactInit;
 		        }	
 		        else if(contactInit != contactMur1){
-		        	System.out.println("Contact haut raté !!!!");
+		        	System.out.println("Contact haut ratÃ© !!!!");
 		        }
 			}
 			else if(etatBarre == EtatBarre.contactDouble){
@@ -329,7 +329,7 @@ public class Barre extends PolygonShape{
 	}
 	
 	public static void detectSurface(Array<Point> points, Array<Balle> balles, Array<Surface> surfaces){	
-		outerloop : //Définir la "outerloop"
+		outerloop : //DÃ©finir la "outerloop"
 			for(int i = 0; i < points.size; i++){
 				for(int j = 0; j < points.size; j++){
 					if(points.get(i) != points.get(j) && points.get(i).getX() == points.get(j).getX() && points.get(i).getY() < points.get(j).getY()){				
@@ -337,7 +337,7 @@ public class Barre extends PolygonShape{
 							if(points.get(j) != points.get(k) && points.get(j).getY() == points.get(k).getY() && points.get(j).getX() < points.get(k).getX()){					
 								for(int l = 0; l < points.size; l++){
 									if(points.get(k) != points.get(l) && points.get(l).getY() == points.get(i).getY() && points.get(l).getX() == points.get(k).getX()){					
-										if(		(points.get(i).getEtat() == EtatPoint.BG) &&							//Sélection des points qui forment un rectangle dans le sans horaire en partant du coin bas gauche
+										if(		(points.get(i).getEtat() == EtatPoint.BG) &&							//SÃ©lection des points qui forment un rectangle dans le sans horaire en partant du coin bas gauche
 												(points.get(i).getEtat() != points.get(j).getEtat()) &&
 												(points.get(i).getEtat() != points.get(k).getEtat()) &&
 												(points.get(i).getEtat() != points.get(l).getEtat()) &&
@@ -346,16 +346,16 @@ public class Barre extends PolygonShape{
 												(points.get(k).getEtat() != points.get(l).getEtat()))
 											{
 											
-											Surface surface = new Surface(points.get(i).getX(),							//Création d'une surface à partir des points sélectionnés
+											Surface surface = new Surface(points.get(i).getX(),							//CrÃ©ation d'une surface Ã  partir des points sÃ©lectionnÃ©s
 													points.get(i).getY(),
 													points.get(k).getX() - points.get(i).getX(),
 													points.get(k).getY() - points.get(i).getY());
 											
-											if(surface.detecteBalle(balles)){											//Vérification si la surface contient au moins une balle
+											if(surface.detecteBalle(balles)){											//VÃ©rification si la surface contient au moins une balle
 												//System.out.println("il y a une balle !");
 											}
 											else {
-													surfaces.add(surface);												//Si pas de balle dans la surface, la surface est enregistrée dans 
+													surfaces.add(surface);												//Si pas de balle dans la surface, la surface est enregistrÃ©e dans 
 																														//la liste des surface en jeu
 													Array<Point> pointsSurface = new Array<Point>();
 													pointsSurface.add(points.get(i));
@@ -363,7 +363,7 @@ public class Barre extends PolygonShape{
 													pointsSurface.add(points.get(k));
 													pointsSurface.add(points.get(l));
 													
-													points.removeAll(pointsSurface, true);								//les points formant cette surface sont éffacés de la liste des points en jeu
+													points.removeAll(pointsSurface, true);								//les points formant cette surface sont Ã©ffacÃ©s de la liste des points en jeu
 
 													break outerloop;
 											}
@@ -423,7 +423,7 @@ public class Barre extends PolygonShape{
 	
 	public void ajoutPoint(Array<Point> points){
 		if(pointsBarre.size > 0){
-			for(int i = 0; i < pointsBarre.size; i++){					//On enlève les points formés par la barre en double
+			for(int i = 0; i < pointsBarre.size; i++){					//On enlÃ¨ve les points formÃ©s par la barre en double
 				for(int j = 0; j < pointsBarre.size; j++){
 					try{
 							if(i != j
@@ -432,12 +432,12 @@ public class Barre extends PolygonShape{
 							pointsBarre.removeIndex(j);				
 						}
 					}catch(Exception e){
-						System.out.println("Exception interceptée !!");
+						System.out.println("Exception interceptÃ©e !!");
 					}
 				}
 			}
 		
-			points.addAll(pointsBarre);									//On ajoute les points qui restent à la liste totale des points
+			points.addAll(pointsBarre);									//On ajoute les points qui restent Ã  la liste totale des points
 		}
 	}
 	
