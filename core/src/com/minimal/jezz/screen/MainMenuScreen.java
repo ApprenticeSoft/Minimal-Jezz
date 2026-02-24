@@ -27,6 +27,7 @@ import com.minimal.jezz.table.TableNotation;
 import com.minimal.jezz.ui.UiActorUtils;
 
 public class MainMenuScreen implements Screen {
+    private static final String TITLE_TEXT = "MINIMAL JEZZ";
 
     final MyGdxGame game;
     private OrthographicCamera camera;
@@ -44,11 +45,15 @@ public class MainMenuScreen implements Screen {
     private TableNotation tableNotation;
     private boolean listenersBound;
     private final boolean webBuild;
+    private final float baseScreenWidth;
+    private final float baseScreenHeight;
 
     public MainMenuScreen(final MyGdxGame gam) {
         game = gam;
         listenersBound = false;
         webBuild = Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.WebGL;
+        baseScreenWidth = Math.max(1f, Gdx.graphics.getWidth());
+        baseScreenHeight = Math.max(1f, Gdx.graphics.getHeight());
         Variables.pause = true;
 
         game.ensureMenuMusic();
@@ -62,11 +67,12 @@ public class MainMenuScreen implements Screen {
         couleur = new Couleurs(1);
 
         fontTitre = game.assets.get("fontTitre.ttf", BitmapFont.class);
+        fontTitre.setUseIntegerPositions(false);
 
         TextureAtlas textureAtlas = game.assets.get("Images.pack", TextureAtlas.class);
         skin.addRegions(textureAtlas);
         glyphLayout = new GlyphLayout();
-        glyphLayout.setText(fontTitre, "MINIMAL JEZZ");
+        updateTitleLayout();
 
         textButtonStyle = new TextButtonStyle();
         if (Gdx.graphics.getHeight() >= 1000) {
@@ -180,6 +186,7 @@ public class MainMenuScreen implements Screen {
 
         game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
+        updateTitleLayout();
         fontTitre.draw(game.batch, glyphLayout, Gdx.graphics.getWidth() / 2f - glyphLayout.width / 2f, 85 * Gdx.graphics.getHeight() / 100f - game.hauteurBanniere);
         game.batch.end();
 
@@ -259,6 +266,10 @@ public class MainMenuScreen implements Screen {
     public void resize(int width, int height) {
         camera.setToOrtho(false, width, height);
         stage.getViewport().update(width, height, true);
+        updateTitleLayout();
+        if (webBuild) {
+            UiActorUtils.centerTextButtons(stage.getRoot());
+        }
     }
 
     @Override
@@ -277,5 +288,19 @@ public class MainMenuScreen implements Screen {
     public void dispose() {
         stage.dispose();
         skin.dispose();
+    }
+
+    private void updateTitleLayout() {
+        float widthScale = Gdx.graphics.getWidth() / baseScreenWidth;
+        float heightScale = Gdx.graphics.getHeight() / baseScreenHeight;
+        float baseScale = Math.min(widthScale, heightScale);
+        fontTitre.getData().setScale(baseScale);
+        glyphLayout.setText(fontTitre, TITLE_TEXT);
+        float targetWidth = Gdx.graphics.getWidth() * 0.8f;
+        if (glyphLayout.width > 0f) {
+            float fitScale = targetWidth / glyphLayout.width;
+            fontTitre.getData().setScale(baseScale * fitScale);
+        }
+        glyphLayout.setText(fontTitre, TITLE_TEXT);
     }
 }

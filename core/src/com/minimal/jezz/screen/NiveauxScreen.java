@@ -49,10 +49,14 @@ public class NiveauxScreen implements Screen {
     private Couleurs couleur;
     private Label titre;
     private boolean listenersBound;
+    private final float baseScreenWidth;
+    private final float baseScreenHeight;
 
     public NiveauxScreen(final MyGdxGame gam) {
         game = gam;
         listenersBound = false;
+        baseScreenWidth = Math.max(1f, Gdx.graphics.getWidth());
+        baseScreenHeight = Math.max(1f, Gdx.graphics.getHeight());
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -69,8 +73,8 @@ public class NiveauxScreen implements Screen {
         LabelStyle titreStyle = new LabelStyle(game.assets.get("fontTitre.ttf", BitmapFont.class), Color.WHITE);
         titre = new Label(gam.langue.choisirNiveau, titreStyle);
         titre.setAlignment(Align.center);
-        titre.setX(Gdx.graphics.getWidth() / 2f - titre.getWidth() / 2f);
-        titre.setY(83 * Gdx.graphics.getHeight() / 100f - titre.getHeight() / 2f);
+        titre.getStyle().font.setUseIntegerPositions(false);
+        updateTitleBounds();
 
         textButtonStyle = new TextButtonStyle();
         if (Gdx.graphics.getHeight() > 1000) {
@@ -152,6 +156,7 @@ public class NiveauxScreen implements Screen {
 
         retourBouton.setStyle(textButtonStyle);
         retourBouton.setTouchable(Touchable.enabled);
+        updateTitleBounds();
         updateRetourButtonBounds();
 
         stage.act();
@@ -196,7 +201,11 @@ public class NiveauxScreen implements Screen {
     public void resize(int width, int height) {
         camera.setToOrtho(false, width, height);
         stage.getViewport().update(width, height, true);
+        updateTitleBounds();
         updateRetourButtonBounds();
+        if (Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.WebGL) {
+            UiActorUtils.centerTextButtons(stage.getRoot());
+        }
     }
 
     @Override
@@ -227,5 +236,30 @@ public class NiveauxScreen implements Screen {
         float minimumSafeY = bannerHeightPx + bottomMargin;
         float fallbackSafeY = Gdx.graphics.getHeight() * RETOUR_MIN_SAFE_SCREEN_HEIGHT_RATIO;
         retourBouton.setY(Math.max(preferredY, Math.max(minimumSafeY, fallbackSafeY)));
+    }
+
+    private void updateTitleBounds() {
+        if (titre == null) {
+            return;
+        }
+        float widthScale = Gdx.graphics.getWidth() / baseScreenWidth;
+        float heightScale = Gdx.graphics.getHeight() / baseScreenHeight;
+        float baseScale = Math.min(widthScale, heightScale);
+        titre.setFontScale(baseScale);
+        titre.invalidateHierarchy();
+        float titleWidth = titre.getPrefWidth();
+        float targetWidth = Gdx.graphics.getWidth() * 0.8f;
+        if (titleWidth > 0f) {
+            float fitScale = targetWidth / titleWidth;
+            titre.setFontScale(baseScale * fitScale);
+            titre.invalidateHierarchy();
+            titleWidth = titre.getPrefWidth();
+        }
+        float titleHeight = titre.getPrefHeight();
+        titre.setSize(titleWidth, titleHeight);
+        titre.setPosition(
+                Gdx.graphics.getWidth() / 2f - titleWidth / 2f,
+                83 * Gdx.graphics.getHeight() / 100f - titleHeight / 2f
+        );
     }
 }

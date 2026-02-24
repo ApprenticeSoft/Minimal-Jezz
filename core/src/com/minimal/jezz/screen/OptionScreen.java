@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -26,6 +27,8 @@ import com.minimal.jezz.MyGdxGame;
 import com.minimal.jezz.ui.UiActorUtils;
 
 public class OptionScreen implements Screen{
+	private static final float OPTION_TITLE_WIDTH_RATIO = 0.25f;
+	private static final float OPTION_TITLE_Y_RATIO = 0.85f;
 
 	final MyGdxGame game;
 	OrthographicCamera camera;
@@ -43,11 +46,17 @@ public class OptionScreen implements Screen{
 	private Couleurs couleur;
 	private boolean listenersBound;
 	private final boolean webBuild;
+	private final float baseScreenWidth;
+	private final float baseScreenHeight;
+	private BitmapFont optionTitleFont;
+	private GlyphLayout optionTitleLayout;
 
 	public OptionScreen(final MyGdxGame gam){
 		game = gam;
 		listenersBound = false;
 		webBuild = Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.WebGL;
+		baseScreenWidth = Math.max(1f, Gdx.graphics.getWidth());
+		baseScreenHeight = Math.max(1f, Gdx.graphics.getHeight());
 		
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -83,10 +92,14 @@ public class OptionScreen implements Screen{
 			optionButtonStyle.down = skin.getDrawable("BoutonPetitChecked");
 			optionButtonStyle.checked = skin.getDrawable("BoutonPetitChecked");
 		}
-		optionButtonStyle.font = game.assets.get("font1.ttf", BitmapFont.class);
-		optionButtonStyle.fontColor = Color.WHITE;
-		optionButtonStyle.downFontColor = new Color(35/256f,59/256f,95/256f, 1);
-		optionButtonStyle.checkedFontColor = new Color(35/256f,59/256f,95/256f, 1);
+			optionButtonStyle.font = game.assets.get("font1.ttf", BitmapFont.class);
+			optionButtonStyle.fontColor = Color.WHITE;
+			optionButtonStyle.downFontColor = new Color(35/256f,59/256f,95/256f, 1);
+			optionButtonStyle.checkedFontColor = new Color(35/256f,59/256f,95/256f, 1);
+
+			optionTitleFont = game.assets.get("fontTitre.ttf", BitmapFont.class);
+			optionTitleFont.setUseIntegerPositions(false);
+			optionTitleLayout = new GlyphLayout();
 		
 		boutonWidth = 48*Gdx.graphics.getWidth()/100;
 		boutonHeight = 18*Gdx.graphics.getWidth()/100;
@@ -260,6 +273,11 @@ public class OptionScreen implements Screen{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		game.batch.setProjectionMatrix(camera.combined);
+		game.batch.begin();
+		updateOptionTitleLayout();
+		optionTitleFont.draw(game.batch, optionTitleLayout, Gdx.graphics.getWidth() / 2f - optionTitleLayout.width / 2f,
+				OPTION_TITLE_Y_RATIO * Gdx.graphics.getHeight() - game.hauteurBanniere);
+		game.batch.end();
 		
 		stage.act();
 		stage.draw();	
@@ -438,6 +456,10 @@ public class OptionScreen implements Screen{
 	public void resize(int width, int height) {
 		camera.setToOrtho(false, width, height);
 		stage.getViewport().update(width, height, true);
+		updateOptionTitleLayout();
+		if (webBuild) {
+			UiActorUtils.centerTextButtons(stage.getRoot());
+		}
 		
 	}
 
@@ -464,6 +486,21 @@ public class OptionScreen implements Screen{
 		System.out.println("------------------------Option screen disposed");
 		stage.dispose();
 		skin.dispose();
+	}
+
+	private void updateOptionTitleLayout() {
+		float widthScale = Gdx.graphics.getWidth() / baseScreenWidth;
+		float heightScale = Gdx.graphics.getHeight() / baseScreenHeight;
+		float baseScale = Math.min(widthScale, heightScale);
+		optionTitleFont.getData().setScale(baseScale);
+		String titleText = game.langue.options.toUpperCase();
+		optionTitleLayout.setText(optionTitleFont, titleText);
+		float targetWidth = Gdx.graphics.getWidth() * OPTION_TITLE_WIDTH_RATIO;
+		if (optionTitleLayout.width > 0f) {
+			float fitScale = targetWidth / optionTitleLayout.width;
+			optionTitleFont.getData().setScale(baseScale * fitScale);
+		}
+		optionTitleLayout.setText(optionTitleFont, titleText);
 	}
 
 }

@@ -456,6 +456,9 @@ public class GameScreen extends InputAdapter implements Screen {
         camera.update();
         stage.getViewport().update(width, height, true);
         updatePauseButtonBounds();
+        if (webBuild) {
+            UiActorUtils.centerTextButtons(stage.getRoot());
+        }
     }
 
     @Override
