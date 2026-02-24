@@ -17,7 +17,7 @@ import com.minimal.jezz.Variables;
 
 public class Balle extends CircleShape {
 
-    private static final float GAMEPLAY_SPEED_SCALE = 0.5f;
+    private static final float GAMEPLAY_SPEED_SCALE = 0.45f;
 
     public Body body;
     private BodyDef bodyDef;

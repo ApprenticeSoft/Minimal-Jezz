@@ -49,6 +49,8 @@ import com.minimal.jezz.table.TablesJeu;
 
 public class GameScreen extends InputAdapter implements Screen {
 
+    private static final float SURFACE_OVERDRAW_BUFFER_PX = 1f;
+
     final MyGdxGame game;
     private OrthographicCamera camera;
 
@@ -287,12 +289,23 @@ public class GameScreen extends InputAdapter implements Screen {
         game.batch.setColor(couleurSurface);
         if (surfaces.size > 0) {
             for (int i = 0; i < surfaces.size; i++) {
+                float xPx = Variables.BOX_TO_WORLD * surfaces.get(i).getX();
+                float yPx = Variables.BOX_TO_WORLD * surfaces.get(i).getY();
+                float widthPx = Variables.BOX_TO_WORLD * surfaces.get(i).getWidth();
+                float heightPx = Variables.BOX_TO_WORLD * surfaces.get(i).getHeight();
+
+                // Expand each captured zone by 1px on all sides to hide HiDPI seam artifacts.
+                float drawXPx = (float) Math.floor(xPx) - SURFACE_OVERDRAW_BUFFER_PX;
+                float drawYPx = (float) Math.floor(yPx) - SURFACE_OVERDRAW_BUFFER_PX;
+                float drawWidthPx = (float) Math.ceil(widthPx) + 2f * SURFACE_OVERDRAW_BUFFER_PX;
+                float drawHeightPx = (float) Math.ceil(heightPx) + 2f * SURFACE_OVERDRAW_BUFFER_PX;
+
                 game.batch.draw(
                         textureAtlas.findRegion("Barre"),
-                        Variables.BOX_TO_WORLD * surfaces.get(i).getX(),
-                        Variables.BOX_TO_WORLD * surfaces.get(i).getY(),
-                        Variables.BOX_TO_WORLD * surfaces.get(i).getWidth(),
-                        Variables.BOX_TO_WORLD * surfaces.get(i).getHeight()
+                        drawXPx,
+                        drawYPx,
+                        drawWidthPx,
+                        drawHeightPx
                 );
             }
         }

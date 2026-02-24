@@ -123,7 +123,7 @@ public class NiveauxScreen implements Screen {
         retourBouton.setWidth(Gdx.graphics.getWidth() / 7f);
         retourBouton.setHeight(Gdx.graphics.getWidth() / 7f);
         retourBouton.setX(niveaux.get(0).localToStageCoordinates(new Vector2(0, 0)).x);
-        retourBouton.setY(retourBouton.getX());
+        updateRetourButtonBounds();
 
         stage.addActor(titre);
         stage.addActor(retourBouton);
@@ -149,6 +149,7 @@ public class NiveauxScreen implements Screen {
 
         retourBouton.setStyle(textButtonStyle);
         retourBouton.setTouchable(Touchable.enabled);
+        updateRetourButtonBounds();
 
         stage.act();
         stage.draw();
@@ -189,6 +190,7 @@ public class NiveauxScreen implements Screen {
     public void resize(int width, int height) {
         camera.setToOrtho(false, width, height);
         stage.getViewport().update(width, height, true);
+        updateRetourButtonBounds();
     }
 
     @Override
@@ -207,5 +209,15 @@ public class NiveauxScreen implements Screen {
     public void dispose() {
         stage.dispose();
         skin.dispose();
+    }
+
+    private void updateRetourButtonBounds() {
+        if (retourBouton == null) {
+            return;
+        }
+        float bottomMargin = Gdx.graphics.getWidth() / 35f;
+        float preferredY = retourBouton.getX();
+        float minimumSafeY = game.hauteurBanniere + bottomMargin;
+        retourBouton.setY(Math.max(preferredY, minimumSafeY));
     }
 }
