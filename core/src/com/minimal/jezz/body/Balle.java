@@ -17,6 +17,8 @@ import com.minimal.jezz.Variables;
 
 public class Balle extends CircleShape {
 
+    private static final float GAMEPLAY_SPEED_SCALE = 0.5f;
+
     public Body body;
     private BodyDef bodyDef;
     private float rayon;
@@ -32,7 +34,7 @@ public class Balle extends CircleShape {
         this.camera = camera;
         rayon = camera.viewportWidth / 50f;
 
-        maxSpeed = Variables.vitesseBalle * camera.viewportHeight;
+        maxSpeed = Variables.vitesseBalle * GAMEPLAY_SPEED_SCALE * camera.viewportHeight;
 
         bodyDef = new BodyDef();
         this.setRadius(rayon);
@@ -54,7 +56,7 @@ public class Balle extends CircleShape {
     }
 
     public void active() {
-        maxSpeed = Variables.vitesseBalle * camera.viewportHeight;
+        maxSpeed = Variables.vitesseBalle * GAMEPLAY_SPEED_SCALE * camera.viewportHeight;
         vectorSpeed = body.getLinearVelocity();
         speed = vectorSpeed.len();
         if (speed > maxSpeed) {
@@ -96,6 +98,6 @@ public class Balle extends CircleShape {
     }
 
     public void setVitesse(float vitesseBalles) {
-        maxSpeed = vitesseBalles * camera.viewportHeight;
+        maxSpeed = vitesseBalles * GAMEPLAY_SPEED_SCALE * camera.viewportHeight;
     }
 }

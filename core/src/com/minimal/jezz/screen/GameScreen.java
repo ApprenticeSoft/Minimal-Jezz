@@ -9,8 +9,11 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
@@ -22,9 +25,13 @@ import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.minimal.jezz.Couleurs;
 import com.minimal.jezz.Donnees;
@@ -59,6 +66,9 @@ public class GameScreen extends InputAdapter implements Screen {
 
     private Stage stage;
     private Label labelPourcentage;
+    private TextButton pauseBouton;
+    private Texture pauseButtonUpTexture;
+    private Texture pauseButtonDownTexture;
 
     private MyGestureListener gestureListener;
     private InputMultiplexer inputMultiplexer;
@@ -155,6 +165,22 @@ public class GameScreen extends InputAdapter implements Screen {
 
         stage.addActor(labelPourcentage);
         tablesJeu = new TablesJeu(gam, stage, skin, level, couleurFond, couleurBarre);
+
+        TextButtonStyle pauseButtonStyle = new TextButtonStyle();
+        pauseButtonUpTexture = createPauseButtonTexture(0f, 0.75f);
+        pauseButtonDownTexture = createPauseButtonTexture(0.2f, 0.95f);
+        pauseButtonStyle.up = new TextureRegionDrawable(new TextureRegion(pauseButtonUpTexture));
+        pauseButtonStyle.down = new TextureRegionDrawable(new TextureRegion(pauseButtonDownTexture));
+        pauseButtonStyle.font = game.assets.get("font1.ttf", BitmapFont.class);
+        pauseButtonStyle.fontColor = Color.WHITE;
+        pauseButtonStyle.downFontColor = new Color(0.27f, 0.695f, 0.613f, 1);
+
+        pauseBouton = new TextButton("II", pauseButtonStyle);
+        pauseBouton.setWidth((Gdx.graphics.getWidth() / 16f) * 1.3f);
+        pauseBouton.setHeight(pauseBouton.getWidth());
+        pauseBouton.setVisible(false);
+        updatePauseButtonBounds();
+        stage.addActor(pauseBouton);
     }
 
     @Override
@@ -235,13 +261,13 @@ public class GameScreen extends InputAdapter implements Screen {
             }
         }
 
+        pauseBouton.setVisible(canTogglePause());
+
         if (Gdx.input.isKeyJustPressed(Keys.BACK) && vies > 0) {
             if (Variables.debut || Variables.gagne) {
                 game.setScreen(new MainMenuScreen(game));
-            } else if (Variables.pause) {
-                tablesJeu.pauseFinie();
             } else {
-                tablesJeu.pause();
+                togglePause();
             }
         }
 
@@ -374,6 +400,16 @@ public class GameScreen extends InputAdapter implements Screen {
             });
 
             tablesJeu.boutonListener(world, barres);
+
+            pauseBouton.addListener(new ClickListener() {
+                @Override
+                public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
+                    if (canTogglePause()) {
+                        togglePause();
+                    }
+                }
+            });
+
             listenersBound = true;
         }
 
@@ -388,6 +424,7 @@ public class GameScreen extends InputAdapter implements Screen {
         camera.position.set(camera.viewportWidth / 2f, camera.viewportHeight / 2f, 0f);
         camera.update();
         stage.getViewport().update(width, height, true);
+        updatePauseButtonBounds();
     }
 
     @Override
@@ -408,6 +445,12 @@ public class GameScreen extends InputAdapter implements Screen {
         skin.dispose();
         stage.dispose();
         world.dispose();
+        if (pauseButtonUpTexture != null) {
+            pauseButtonUpTexture.dispose();
+        }
+        if (pauseButtonDownTexture != null) {
+            pauseButtonDownTexture.dispose();
+        }
     }
 
     public float calculAirOccupee(Array<Barre> barres, Array<Surface> surfaces) {
@@ -422,5 +465,44 @@ public class GameScreen extends InputAdapter implements Screen {
         }
 
         return airOccupee;
+    }
+
+    private Texture createPauseButtonTexture(float fillAlpha, float borderAlpha) {
+        Pixmap pixmap = new Pixmap(96, 96, Pixmap.Format.RGBA8888);
+        pixmap.setColor(1, 1, 1, 0);
+        pixmap.fill();
+        if (fillAlpha > 0f) {
+            pixmap.setColor(0, 0, 0, fillAlpha);
+            pixmap.fillRectangle(4, 4, 88, 88);
+        }
+        pixmap.setColor(1, 1, 1, borderAlpha);
+        for (int i = 0; i < 4; i++) {
+            pixmap.drawRectangle(i, i, 96 - 2 * i, 96 - 2 * i);
+        }
+        Texture texture = new Texture(pixmap);
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        pixmap.dispose();
+        return texture;
+    }
+
+    private boolean canTogglePause() {
+        return vies > 0 && !Variables.debut && !Variables.gagne && !Variables.perdu;
+    }
+
+    private void togglePause() {
+        if (Variables.pause) {
+            tablesJeu.pauseFinie();
+        } else {
+            tablesJeu.pause();
+        }
+    }
+
+    private void updatePauseButtonBounds() {
+        if (pauseBouton == null) {
+            return;
+        }
+        float margin = Gdx.graphics.getWidth() / 40f;
+        pauseBouton.setX(Gdx.graphics.getWidth() - pauseBouton.getWidth() - margin);
+        pauseBouton.setY(Gdx.graphics.getHeight() - pauseBouton.getHeight() - margin);
     }
 }

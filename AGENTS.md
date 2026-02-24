@@ -62,6 +62,19 @@ This file summarizes the modernization and optimization pass applied to `Minimal
 - Added new `pinchStop()` implementation required by current libGDX `GestureListener`.
 - Removed menu social-button integration from `MainMenuScreen` to match the prior project pass.
 
+## Additional Gameplay Tuning (Post-Revival)
+- Ball speed was reduced by 50% at runtime (`Balle` speed cap scaling) so all levels remain playable on modern high-refresh devices.
+- Added the same custom pause button style used in `Minimal-Brick-Breaker-Free`:
+- Transparent square with white border and `"II"` label.
+- Pressed state keeps a subtle dark fill.
+- Button size set to the Brick Breaker ratio (`(screenWidth / 16) * 1.3`) and anchored top-right with margin.
+- Added pause-button-specific logic in `GameScreen`:
+- Visibility only during active gameplay.
+- Tap toggles pause/resume using existing `TablesJeu` pause flows.
+- Back key now uses the same pause toggle path during gameplay.
+- Pause button bounds are recalculated on resize.
+- Pause button textures are explicitly disposed to avoid texture leaks.
+
 ## Validation Performed
 - Built successfully with:
 - `./gradlew :android:assembleDebug`
@@ -69,6 +82,10 @@ This file summarizes the modernization and optimization pass applied to `Minimal
 - `adb install -r android/build/outputs/apk/debug/android-debug.apk`
 - Launched app from ADB and checked logcat for startup/runtime fatals.
 - Confirmed no fatal exceptions on startup after migration.
+- Rebuilt after the gameplay/pause-button update:
+- `./gradlew :android:assembleDebug`
+- APK reinstall succeeded.
+- ADB launch/logcat smoke test was blocked by device authorization reset (`device unauthorized`) after daemon restart; runtime crash scan needs re-authorization on device.
 
 ## Result
 - `Minimal-Jezz` now builds and runs with modern Android/libGDX toolchain.
