@@ -310,7 +310,7 @@ public class Barre extends PolygonShape{
 	}
 	
 	public void active(Array<Barre> array, Array<Point> points){
-		if(barre1.getUserData() == "Barre" || barre1.getUserData() == "Morte"){
+		if("Barre".equals(barre1.getUserData()) || "Morte".equals(barre1.getUserData())){
     		barre1.setActive(false);
     		world.destroyBody(barre1);
     		creationBarre(points);

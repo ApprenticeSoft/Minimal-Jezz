@@ -360,7 +360,7 @@ public class TablesJeu {
 		okBouton.addListener(new ClickListener(){
 			@Override
 			public void clicked(InputEvent event, float x, float y){
-				Variables.début = false;
+				Variables.debut = false;
 		       	Variables.BOX_STEP = 1/60f;
 		       	imageDebut.addAction(Actions.moveTo(-Gdx.graphics.getWidth(),
 						imageDebut.getY(), 

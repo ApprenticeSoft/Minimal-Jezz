@@ -40,9 +40,11 @@ public class OptionScreen implements Screen{
 	private float boutonWidth, boutonHeight, boutonEcart, boutonInactifX, langueY, sonY;
 	private boolean langueActif, sonActif;
 	private Couleurs couleur;
+	private boolean listenersBound;
 
 	public OptionScreen(final MyGdxGame gam){
 		game = gam;
+		listenersBound = false;
 		
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -264,7 +266,12 @@ public class OptionScreen implements Screen{
 	@Override
 	public void show() {
 		Gdx.input.setInputProcessor(stage);
-		Gdx.input.setCatchBackKey(true);
+		Gdx.input.setCatchKey(Keys.BACK, true);
+		game.actionResolver.showBanner();
+		if (listenersBound) {
+			return;
+		}
+		listenersBound = true;
 		
 		//Utilisation du menu
 		langueBouton.addListener(new ClickListener(){
@@ -417,7 +424,8 @@ public class OptionScreen implements Screen{
 	
 	@Override
 	public void resize(int width, int height) {
-		// TODO Auto-generated method stub
+		camera.setToOrtho(false, width, height);
+		stage.getViewport().update(width, height, true);
 		
 	}
 
