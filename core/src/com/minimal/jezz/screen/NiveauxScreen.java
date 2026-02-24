@@ -31,6 +31,8 @@ import com.minimal.jezz.Variables;
 
 public class NiveauxScreen implements Screen {
 
+    private static final float RETOUR_MIN_SAFE_SCREEN_HEIGHT_RATIO = 0.12f;
+
     final MyGdxGame game;
     OrthographicCamera camera;
     private Stage stage;
@@ -217,7 +219,9 @@ public class NiveauxScreen implements Screen {
         }
         float bottomMargin = Gdx.graphics.getWidth() / 35f;
         float preferredY = retourBouton.getX();
-        float minimumSafeY = game.hauteurBanniere + bottomMargin;
-        retourBouton.setY(Math.max(preferredY, minimumSafeY));
+        float bannerHeightPx = Math.max(game.hauteurBanniere, game.actionResolver.getBannerHeightPx());
+        float minimumSafeY = bannerHeightPx + bottomMargin;
+        float fallbackSafeY = Gdx.graphics.getHeight() * RETOUR_MIN_SAFE_SCREEN_HEIGHT_RATIO;
+        retourBouton.setY(Math.max(preferredY, Math.max(minimumSafeY, fallbackSafeY)));
     }
 }
