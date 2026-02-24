@@ -78,6 +78,9 @@ This file summarizes the modernization and optimization pass applied to `Minimal
 - Updated Level Cleared UI in `TablesJeu`:
 - Secondary button text changed from Replay to Menu.
 - Secondary button now routes to `MainMenuScreen` instead of restarting the current level.
+- Updated Pause UI in `TablesJeu`:
+- Removed the Restart button from the pause menu.
+- Pause actions are now `Resume -> Menu -> Quit` with consistent row spacing and no empty gap.
 
 ## Validation Performed
 - Built successfully with:
@@ -91,6 +94,10 @@ This file summarizes the modernization and optimization pass applied to `Minimal
 - APK reinstall succeeded.
 - ADB launch/logcat smoke test was blocked by device authorization reset (`device unauthorized`) after daemon restart; runtime crash scan needs re-authorization on device.
 - Rebuilt after menu/popup update:
+- `./gradlew :android:assembleDebug`
+- Installed to device with `adb install -r` (`Success`).
+- Launched with `adb shell am start -n com.minimal.jezz.android/.AndroidLauncher`.
+- Rebuilt after pause-menu cleanup:
 - `./gradlew :android:assembleDebug`
 - Installed to device with `adb install -r` (`Success`).
 - Launched with `adb shell am start -n com.minimal.jezz.android/.AndroidLauncher`.

@@ -32,7 +32,7 @@ public class TablesJeu {
 	
 	private Table tableDebut, tableFin, tableJeuFini, tablePerdu, tablePause;
 	private TextButtonStyle textButtonStyle, textButtonStyleDebut;
-	private TextButton okBouton, nextBouton, replayBouton, replayBouton2, menuBouton, menuBouton2, menuBouton3, restartBouton, resumeBouton, quitBouton;
+	private TextButton okBouton, nextBouton, replayBouton, replayBouton2, menuBouton, menuBouton2, menuBouton3, resumeBouton, quitBouton;
 	private LabelStyle labelStyle, labelStyleDebut;
 	private Image imageDebut, imageFin, imagePause;
 	private GlyphLayout glyphLayout;
@@ -139,7 +139,6 @@ public class TablesJeu {
 		glyphLayout.setText(game.assets.get("fontTitre.ttf", BitmapFont.class), game.langue.recommencer);
 
 		resumeBouton = new TextButton(game.langue.reprendre, textButtonStyle);
-		restartBouton = new TextButton(game.langue.recommencer, textButtonStyle);	
 		menuBouton = new TextButton(game.langue.menu, textButtonStyle);
 		quitBouton = new TextButton(game.langue.quitter, textButtonStyle);
 		
@@ -149,7 +148,6 @@ public class TablesJeu {
 		else
 			tablePause.defaults().height(Gdx.graphics.getHeight()/12).width(0.75f*glyphLayout.width).space(Gdx.graphics.getHeight()/100);
 		tablePause.add(resumeBouton).row();
-		tablePause.add(restartBouton).row();
 		tablePause.add(menuBouton).row();
 		tablePause.add(quitBouton).row();
 		tablePause.setSize(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
@@ -286,24 +284,6 @@ public class TablesJeu {
 				game.setScreen(new MainMenuScreen(game));
 			}
 		});
-		
-		restartBouton.addListener(new ClickListener(){
-			@Override
-			public void clicked(InputEvent event, float x, float y){
-				try{
-					for(Barre barre : barres){
-					world.destroyBody(barre.barre1);
-					}
-					barres.removeRange(0, barres.size-1);
-				}catch(Exception e){
-					
-				}
-				
-				Variables.BOX_STEP = 1/60f;
-				game.setScreen(new GameScreen(game));
-			}
-		});
-		
 		replayBouton2.addListener(new ClickListener(){
 			@Override
 			public void clicked(InputEvent event, float x, float y){
