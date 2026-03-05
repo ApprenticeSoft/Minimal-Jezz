@@ -22,7 +22,9 @@ public class Variables {
     public static boolean gagne = true;
 
     // Ball properties
-    public static float vitesseBalle = 0.7f;
+    public static final float BASE_BALL_CROSS_SCREEN_SECONDS = 3.175f;
+    public static float vitesseBalleNormale = 0.7f;
+    public static float vitesseBalle = vitesseBalleNormale;
     public static float vitesseBalleScale = 1f;
 
     // Bar drawing/gameplay

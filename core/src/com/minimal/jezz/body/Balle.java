@@ -17,7 +17,7 @@ import com.minimal.jezz.Variables;
 
 public class Balle extends CircleShape {
 
-    private static final float GAMEPLAY_SPEED_SCALE = 0.45f;
+    private static final float MIN_SPEED_RATIO = 0.8f;
 
     public Body body;
     private BodyDef bodyDef;
@@ -34,7 +34,7 @@ public class Balle extends CircleShape {
         this.camera = camera;
         rayon = camera.viewportWidth / 50f;
 
-        maxSpeed = Variables.vitesseBalle * Variables.vitesseBalleScale * GAMEPLAY_SPEED_SCALE * camera.viewportHeight;
+        maxSpeed = computeTargetMaxSpeed();
 
         bodyDef = new BodyDef();
         this.setRadius(rayon);
@@ -50,20 +50,28 @@ public class Balle extends CircleShape {
         body.createFixture(fixtureDef);
         body.setUserData("Balle");
 
-        float initY = MathUtils.random(-200, 200);
-        float initX = MathUtils.random(-200, 200);
-        body.applyLinearImpulse(initY / 100f, initX / 100f, body.getPosition().x, body.getPosition().y, true);
+        Vector2 launchDirection = new Vector2(MathUtils.random(-1f, 1f), MathUtils.random(-1f, 1f));
+        if (launchDirection.isZero()) {
+            launchDirection.set(0f, 1f);
+        }
+        body.setLinearVelocity(launchDirection.nor().scl(maxSpeed));
     }
 
     public void active() {
-        maxSpeed = Variables.vitesseBalle * Variables.vitesseBalleScale * GAMEPLAY_SPEED_SCALE * camera.viewportHeight;
+        maxSpeed = computeTargetMaxSpeed();
         vectorSpeed = body.getLinearVelocity();
         speed = vectorSpeed.len();
         if (speed > maxSpeed) {
             body.setLinearVelocity(vectorSpeed.limit(maxSpeed));
-        } else if (speed < 0.8f * maxSpeed) {
-            Vector2 n = vectorSpeed.nor();
-            body.applyLinearImpulse(n.x, n.y, body.getPosition().x, body.getPosition().y, true);
+        } else if (speed < MIN_SPEED_RATIO * maxSpeed) {
+            Vector2 direction = new Vector2(vectorSpeed);
+            if (direction.isZero()) {
+                direction.set(MathUtils.random(-1f, 1f), MathUtils.random(-1f, 1f));
+                if (direction.isZero()) {
+                    direction.set(0f, 1f);
+                }
+            }
+            body.setLinearVelocity(direction.nor().scl(MIN_SPEED_RATIO * maxSpeed));
         }
 
         if (body.getPosition().x - rayon < 0) {
@@ -98,6 +106,16 @@ public class Balle extends CircleShape {
     }
 
     public void setVitesse(float vitesseBalles) {
-        maxSpeed = vitesseBalles * GAMEPLAY_SPEED_SCALE * camera.viewportHeight;
+        float vitesseRatio = Variables.vitesseBalleNormale == 0f ? 1f : vitesseBalles / Variables.vitesseBalleNormale;
+        maxSpeed = computeBaseVerticalSpeed() * vitesseRatio * Variables.vitesseBalleScale;
+    }
+
+    private float computeTargetMaxSpeed() {
+        float vitesseRatio = Variables.vitesseBalleNormale == 0f ? 1f : Variables.vitesseBalle / Variables.vitesseBalleNormale;
+        return computeBaseVerticalSpeed() * vitesseRatio * Variables.vitesseBalleScale;
+    }
+
+    private float computeBaseVerticalSpeed() {
+        return camera.viewportHeight / Variables.BASE_BALL_CROSS_SCREEN_SECONDS;
     }
 }
