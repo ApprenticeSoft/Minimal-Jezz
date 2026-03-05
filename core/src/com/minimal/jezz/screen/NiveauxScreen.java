@@ -33,6 +33,7 @@ import com.minimal.jezz.ui.UiActorUtils;
 public class NiveauxScreen implements Screen {
 
     private static final float RETOUR_MIN_SAFE_SCREEN_HEIGHT_RATIO = 0.12f;
+    private static final float LEVEL_TITLE_SIZE_DIVISOR = 1.5f;
 
     final MyGdxGame game;
     OrthographicCamera camera;
@@ -251,7 +252,7 @@ public class NiveauxScreen implements Screen {
         float targetWidth = Gdx.graphics.getWidth() * 0.8f;
         if (titleWidth > 0f) {
             float fitScale = targetWidth / titleWidth;
-            titre.setFontScale(baseScale * fitScale);
+            titre.setFontScale(baseScale * fitScale / LEVEL_TITLE_SIZE_DIVISOR);
             titre.invalidateHierarchy();
             titleWidth = titre.getPrefWidth();
         }
