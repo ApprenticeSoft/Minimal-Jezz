@@ -190,7 +190,7 @@ public class MainMenuScreen implements Screen {
         fontTitre.draw(game.batch, glyphLayout, Gdx.graphics.getWidth() / 2f - glyphLayout.width / 2f, 85 * Gdx.graphics.getHeight() / 100f - game.hauteurBanniere);
         game.batch.end();
 
-        stage.act();
+        stage.act(Math.min(delta, 1f / 15f));
         stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Keys.BACK)) {

@@ -56,7 +56,7 @@ public class MyGestureListener implements GestureListener {
 
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
-        if (Variables.BOX_STEP != 0) {
+        if (!Variables.debut && !Variables.pause && !Variables.gagne && !Variables.perdu) {
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
                 vertical = false;
                 direction = new Vector2(-2f, 0);

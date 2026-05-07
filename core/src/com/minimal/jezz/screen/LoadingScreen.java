@@ -120,7 +120,7 @@ public class LoadingScreen implements Screen {
         camera.update();
         game.batch.setProjectionMatrix(camera.combined);
 
-        stage.act();
+        stage.act(Math.min(delta, 1f / 15f));
         stage.draw();
 
         if (game.assets.update()) {

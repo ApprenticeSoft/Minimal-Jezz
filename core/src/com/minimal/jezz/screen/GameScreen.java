@@ -51,6 +51,8 @@ import com.minimal.jezz.ui.UiActorUtils;
 public class GameScreen extends InputAdapter implements Screen {
 
     private static final float SURFACE_OVERDRAW_BUFFER_PX = 1f;
+    private static final float MAX_FRAME_DELTA = 1f / 15f;
+    private static final int MAX_PHYSICS_STEPS_PER_FRAME = 5;
 
     final MyGdxGame game;
     private OrthographicCamera camera;
@@ -89,6 +91,7 @@ public class GameScreen extends InputAdapter implements Screen {
     private boolean bannerVisible;
     private final boolean webBuild;
     private final boolean showPauseButton;
+    private float physicsAccumulator;
 
     public GameScreen(final MyGdxGame gam) {
         game = gam;
@@ -125,7 +128,7 @@ public class GameScreen extends InputAdapter implements Screen {
         skin.addRegions(textureAtlas);
         world = new World(new Vector2(0, 0), true);
         World.setVelocityThreshold(0);
-        Variables.BOX_STEP = 0;
+        Variables.BOX_STEP = 1 / 60f;
         Variables.pause = false;
         Variables.perdu = false;
         Variables.gagne = false;
@@ -195,93 +198,20 @@ public class GameScreen extends InputAdapter implements Screen {
 
     @Override
     public void render(float delta) {
+        float frameDelta = Math.min(delta, MAX_FRAME_DELTA);
+
         Gdx.gl.glClearColor(couleurFond.r, couleurFond.g, couleurFond.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        float currentAir = 100 * calculAirOccupee(barres, surfaces) / airTotale;
-        if (pourcentageAir != currentAir && !Variables.spawn) {
-            pourcentageAir = currentAir;
-            labelPourcentage.setText((int) pourcentageAir + "%");
-            labelPourcentage.addAction(Actions.sequence(
-                    Actions.moveTo(Gdx.graphics.getWidth() / 2f - labelPourcentage.getPrefWidth() / 2f, labelPourcentage.getY()),
-                    Actions.alpha(1),
-                    Actions.delay(0.5f),
-                    Actions.alpha(0, 0.6f, Interpolation.sineIn)
-            ));
-        }
+        updatePauseControls();
+        if(shouldSimulate())
+            stepPhysics(frameDelta);
+        else
+            physicsAccumulator = 0f;
 
-        world.step(Variables.BOX_STEP, Variables.BOX_VELOCITY_ITERATIONS, Variables.BOX_POSITION_ITERATIONS);
-
-        for (int i = 0; i < balles.size; i++) {
-            balles.get(i).active();
-        }
-
-        if (!Variables.pause && !Variables.gagne && vies > 0) {
-            for (Barre barre : barres) {
-                barre.active(barres, points);
-            }
-        }
-
-        Barre.detectSurface(points, balles, surfaces);
-
-        if (100 * calculAirOccupee(barres, surfaces) / airTotale > Variables.objectif && !Variables.spawn) {
-            if (!Variables.gagne) {
-                Variables.gagne = true;
-                if (Donnees.getSon()) {
-                    Barre.sonSurface.stop();
-                    sonNiveauFini.play();
-                }
-                if (!adBreakSent) {
-                    adBreakSent = true;
-                    game.actionResolver.onNaturalBreak();
-                }
-            }
-            if (Variables.niveauSelectione == 25) {
-                tablesJeu.jeuFini();
-            } else {
-                tablesJeu.gagne();
-                if (Variables.niveauSelectione == Donnees.getNiveau()) {
-                    Donnees.setNiveau(Donnees.getNiveau() + 1);
-                }
-            }
-        }
-
-        if (vies <= 0) {
-            if (!Variables.perdu) {
-                Variables.perdu = true;
-                if (Donnees.getSon()) {
-                    sonContact.stop();
-                    sonPerdu.play();
-                }
-                if (!adBreakSent) {
-                    adBreakSent = true;
-                    game.actionResolver.onNaturalBreak();
-                }
-            }
-            tablesJeu.perdu();
-        }
-
-        boolean shouldShowBanner = Variables.pause || Variables.gagne || Variables.perdu;
-        if (shouldShowBanner != bannerVisible) {
-            bannerVisible = shouldShowBanner;
-            if (bannerVisible) {
-                game.actionResolver.showBanner();
-            } else {
-                game.actionResolver.hideBanner();
-            }
-        }
-
-        if (pauseBouton != null) {
-            pauseBouton.setVisible(canTogglePause());
-        }
-
-        if (vies > 0 && isPauseTogglePressed()) {
-            if (Variables.debut || Variables.gagne) {
-                game.setScreen(new MainMenuScreen(game));
-            } else {
-                togglePause();
-            }
-        }
+        updateAirLabel();
+        updateWinLoseState();
+        updateAdVisibility();
 
         game.batch.begin();
         for (int i = 0; i < balles.size; i++) {
@@ -326,7 +256,7 @@ public class GameScreen extends InputAdapter implements Screen {
         game.batch.draw(textureAtlas.findRegion("Barre"), 0, (Gdx.graphics.getHeight() - Variables.posBordure * Gdx.graphics.getWidth()), Gdx.graphics.getWidth(), Variables.posBordure * Gdx.graphics.getWidth());
         game.batch.end();
 
-        stage.act();
+        stage.act(frameDelta);
         stage.draw();
 
         game.batch.begin();
@@ -517,6 +447,132 @@ public class GameScreen extends InputAdapter implements Screen {
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         pixmap.dispose();
         return texture;
+    }
+
+    private boolean shouldSimulate() {
+        return !Variables.debut && !Variables.pause && !Variables.gagne && !Variables.perdu && vies > 0;
+    }
+
+    private void stepPhysics(float frameDelta) {
+        physicsAccumulator += frameDelta;
+        int steps = 0;
+        while (physicsAccumulator >= Variables.BOX_STEP && steps < MAX_PHYSICS_STEPS_PER_FRAME) {
+            fixedStep(Variables.BOX_STEP);
+            world.step(Variables.BOX_STEP, Variables.BOX_VELOCITY_ITERATIONS, Variables.BOX_POSITION_ITERATIONS);
+            physicsAccumulator -= Variables.BOX_STEP;
+            steps++;
+        }
+        if (steps == MAX_PHYSICS_STEPS_PER_FRAME && physicsAccumulator >= Variables.BOX_STEP) {
+            physicsAccumulator = 0f;
+        }
+
+        Barre.detectSurface(points, balles, surfaces);
+    }
+
+    private void fixedStep(float fixedDelta) {
+        for (int i = 0; i < balles.size; i++) {
+            balles.get(i).active();
+        }
+
+        for (Barre barre : barres) {
+            barre.active(barres, points, fixedDelta);
+        }
+    }
+
+    private void updateAirLabel() {
+        float currentAir = 100 * calculAirOccupee(barres, surfaces) / airTotale;
+        if (pourcentageAir == currentAir || Variables.spawn) {
+            return;
+        }
+
+        pourcentageAir = currentAir;
+        labelPourcentage.setText((int) pourcentageAir + "%");
+        labelPourcentage.addAction(Actions.sequence(
+                Actions.moveTo(Gdx.graphics.getWidth() / 2f - labelPourcentage.getPrefWidth() / 2f, labelPourcentage.getY()),
+                Actions.alpha(1),
+                Actions.delay(0.5f),
+                Actions.alpha(0, 0.6f, Interpolation.sineIn)
+        ));
+    }
+
+    private void updateWinLoseState() {
+        if (100 * calculAirOccupee(barres, surfaces) / airTotale > Variables.objectif && !Variables.spawn) {
+            finishWonLevel();
+        }
+
+        if (vies <= 0) {
+            finishLostLevel();
+        }
+    }
+
+    private void finishWonLevel() {
+        if (!Variables.gagne) {
+            Variables.gagne = true;
+            physicsAccumulator = 0f;
+            if (Donnees.getSon()) {
+                Barre.sonSurface.stop();
+                sonNiveauFini.play();
+            }
+            sendAdBreakOnce();
+        }
+
+        if (Variables.niveauSelectione == 25) {
+            tablesJeu.jeuFini();
+        } else {
+            tablesJeu.gagne();
+            if (Variables.niveauSelectione == Donnees.getNiveau()) {
+                Donnees.setNiveau(Donnees.getNiveau() + 1);
+            }
+        }
+    }
+
+    private void finishLostLevel() {
+        if (!Variables.perdu) {
+            Variables.perdu = true;
+            physicsAccumulator = 0f;
+            if (Donnees.getSon()) {
+                sonContact.stop();
+                sonPerdu.play();
+            }
+            sendAdBreakOnce();
+        }
+        tablesJeu.perdu();
+    }
+
+    private void sendAdBreakOnce() {
+        if (adBreakSent) {
+            return;
+        }
+        adBreakSent = true;
+        game.actionResolver.onNaturalBreak();
+    }
+
+    private void updateAdVisibility() {
+        boolean shouldShowBanner = Variables.pause || Variables.gagne || Variables.perdu;
+        if (shouldShowBanner == bannerVisible) {
+            return;
+        }
+
+        bannerVisible = shouldShowBanner;
+        if (bannerVisible) {
+            game.actionResolver.showBanner();
+        } else {
+            game.actionResolver.hideBanner();
+        }
+    }
+
+    private void updatePauseControls() {
+        if (pauseBouton != null) {
+            pauseBouton.setVisible(canTogglePause());
+        }
+
+        if (vies > 0 && isPauseTogglePressed()) {
+            if (Variables.debut || Variables.gagne) {
+                game.setScreen(new MainMenuScreen(game));
+            } else {
+                togglePause();
+            }
+        }
     }
 
     private boolean canTogglePause() {

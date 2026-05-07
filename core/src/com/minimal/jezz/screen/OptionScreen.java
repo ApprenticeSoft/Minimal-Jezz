@@ -279,7 +279,7 @@ public class OptionScreen implements Screen{
 				OPTION_TITLE_Y_RATIO * Gdx.graphics.getHeight() - game.hauteurBanniere);
 		game.batch.end();
 		
-		stage.act();
+		stage.act(Math.min(delta, 1f / 15f));
 		stage.draw();	
 		
 		 //Utilisation du bouton BACK

@@ -160,7 +160,7 @@ public class NiveauxScreen implements Screen {
         updateTitleBounds();
         updateRetourButtonBounds();
 
-        stage.act();
+        stage.act(Math.min(delta, 1f / 15f));
         stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Keys.BACK)) {

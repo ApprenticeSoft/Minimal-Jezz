@@ -178,7 +178,6 @@ public class TablesJeu {
 	
 	public void pause(){
 	  	Variables.pause = true;
-       	Variables.BOX_STEP = 0;
        	imagePause.addAction(Actions.alpha(0.75f, 0.25f));
 		tablePause.addAction(Actions.sequence(Actions.moveTo(Gdx.graphics.getWidth()/2 - tablePause.getWidth()/2, tablePause.getY()),
 												Actions.alpha(1, 0.25f)));
@@ -186,15 +185,12 @@ public class TablesJeu {
 	
 	public void pauseFinie(){
 		Variables.pause = false;
-		Variables.BOX_STEP = 1/60f;
        	imagePause.addAction(Actions.alpha(0, 0.25f));
 		tablePause.addAction(Actions.sequence(Actions.alpha(0, 0.25f),
 												Actions.moveTo(2 * Gdx.graphics.getWidth(), tablePause.getY())));
 	}
 	
 	public void perdu(){
-		Variables.BOX_STEP = 0;
-
 		imageFin.setWidth(tablePerdu.getPrefWidth() + Gdx.graphics.getWidth()/20);
 		imageFin.setHeight(tablePerdu.getPrefHeight() + Gdx.graphics.getWidth()/20);
 		
@@ -207,8 +203,6 @@ public class TablesJeu {
 	}
 	
 	public void gagne(){
-		Variables.BOX_STEP = 0;
-
 		imageFin.setWidth(tableFin.getPrefWidth() + Gdx.graphics.getWidth()/20);
 		imageFin.setHeight(tableFin.getPrefHeight() + Gdx.graphics.getWidth()/20);
 		
@@ -221,8 +215,6 @@ public class TablesJeu {
 	}
 	
 	public void jeuFini(){
-		Variables.BOX_STEP = 0;
-
 		imageFin.setWidth(tableJeuFini.getPrefWidth() + Gdx.graphics.getWidth()/20);
 		imageFin.setHeight(tableJeuFini.getPrefHeight() + Gdx.graphics.getWidth()/20);
 		
@@ -248,10 +240,7 @@ public class TablesJeu {
 					
 				}
 				
-				//Sortie de la pause
-				Variables.BOX_STEP = 1/60f;
-				
-				//Choix de la couleur du niveau suivant
+					//Choix de la couleur du niveau suivant
 				int couleur = Variables.couleurSelectionee;
 				while(couleur == Variables.couleurSelectionee){
 					Variables.couleurSelectionee = MathUtils.random(1, 10);
@@ -281,8 +270,7 @@ public class TablesJeu {
 					
 				}
 				
-				Variables.BOX_STEP = 1/60f;
-				game.setScreen(new MainMenuScreen(game));
+					game.setScreen(new MainMenuScreen(game));
 			}
 		});
 		replayBouton2.addListener(new ClickListener(){
@@ -293,8 +281,7 @@ public class TablesJeu {
 				}
 				barres.removeRange(0, barres.size-1);
 				
-				Variables.BOX_STEP = 1/60f;
-				game.setScreen(new GameScreen(game));
+					game.setScreen(new GameScreen(game));
 			}
 		});
 		
@@ -321,10 +308,9 @@ public class TablesJeu {
 		
 		resumeBouton.addListener(new ClickListener(){
 			@Override
-			public void clicked(InputEvent event, float x, float y){
-				Variables.pause = false;
-		       	Variables.BOX_STEP = 1/60f;
-		       	imagePause.addAction(Actions.alpha(0, 0.25f));
+				public void clicked(InputEvent event, float x, float y){
+					Variables.pause = false;
+			       	imagePause.addAction(Actions.alpha(0, 0.25f));
 		       	tablePause.addAction(Actions.moveTo(2 * Gdx.graphics.getWidth(),
 							tablePause.getY(), 
 							0.25f));
@@ -340,10 +326,9 @@ public class TablesJeu {
 		
 		okBouton.addListener(new ClickListener(){
 			@Override
-			public void clicked(InputEvent event, float x, float y){
-				Variables.debut = false;
-		       	Variables.BOX_STEP = 1/60f;
-		       	imageDebut.addAction(Actions.moveTo(-Gdx.graphics.getWidth(),
+				public void clicked(InputEvent event, float x, float y){
+					Variables.debut = false;
+			       	imageDebut.addAction(Actions.moveTo(-Gdx.graphics.getWidth(),
 						imageDebut.getY(), 
 						0.25f));
 		       	tableDebut.addAction(Actions.moveTo(-Gdx.graphics.getWidth(),

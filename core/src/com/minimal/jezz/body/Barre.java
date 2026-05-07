@@ -72,7 +72,7 @@ public class Barre extends PolygonShape{
         fixtureDef.friction = 0.0f;  
         fixtureDef.restitution = 1f; 
         
-        creationBarre(points);
+	        creationBarre(points, 0f);
 	}
 	
 	public Barre(final MyGdxGame game, World world, Camera camera, float X, float Y, float width, float height){
@@ -100,10 +100,10 @@ public class Barre extends PolygonShape{
         barre1.setFixedRotation(true);
 	}
 	
-	public void creationBarre(Array<Point> points){
+	public void creationBarre(Array<Point> points, float delta){
 		if(vertical){
 			if(etatBarre == EtatBarre.croissante){
-	    		longueur += speed*Gdx.graphics.getDeltaTime();
+	    		longueur += speed * delta;
 	    		height = longueur;
 				polygonShape = new PolygonShape();
 		        polygonShape.setAsBox(width, height);
@@ -127,7 +127,7 @@ public class Barre extends PolygonShape{
 		        }
 			}
 			else if(etatBarre == EtatBarre.contactHaut){
-	    		longueur += 0.5f*speed*Gdx.graphics.getDeltaTime();
+	    		longueur += 0.5f * speed * delta;
 	    		height = longueur;
 				polygonShape = new PolygonShape();
 		        polygonShape.setAsBox(width, height);
@@ -145,7 +145,7 @@ public class Barre extends PolygonShape{
 		        }
 			}
 			else if(etatBarre == EtatBarre.contactBas){
-	    		longueur += 0.5f*speed*Gdx.graphics.getDeltaTime();
+	    		longueur += 0.5f * speed * delta;
 	    		height = longueur;
 				polygonShape = new PolygonShape();
 		        polygonShape.setAsBox(width, height);
@@ -181,7 +181,7 @@ public class Barre extends PolygonShape{
 			else if(etatBarre == EtatBarre.finie){
 			}
 			else if(etatBarre == EtatBarre.decroissante){
-	    		longueur -= 2*speed*Gdx.graphics.getDeltaTime();
+	    		longueur -= 2 * speed * delta;
 	    		height = longueur;
 				polygonShape = new PolygonShape();
 		        polygonShape.setAsBox(width, height);
@@ -203,7 +203,7 @@ public class Barre extends PolygonShape{
 		}
 		else if(!vertical){
 			if(etatBarre == EtatBarre.croissante){
-	    		longueur += speed*Gdx.graphics.getDeltaTime();
+	    		longueur += speed * delta;
 	    		width = longueur;
 				polygonShape = new PolygonShape();
 		        polygonShape.setAsBox(width, height);
@@ -227,7 +227,7 @@ public class Barre extends PolygonShape{
 		        }
 			}
 			else if(etatBarre == EtatBarre.contactDroite){
-	    		longueur += 0.5f*speed*Gdx.graphics.getDeltaTime();
+	    		longueur += 0.5f * speed * delta;
 	    		width = longueur;
 				polygonShape = new PolygonShape();
 		        polygonShape.setAsBox(width, height);
@@ -245,7 +245,7 @@ public class Barre extends PolygonShape{
 		        }
 			}
 			else if(etatBarre == EtatBarre.contactGauche){
-	    		longueur += 0.5f*speed*Gdx.graphics.getDeltaTime();
+	    		longueur += 0.5f * speed * delta;
 	    		width = longueur;
 				polygonShape = new PolygonShape();
 		        polygonShape.setAsBox(width, height);
@@ -281,7 +281,7 @@ public class Barre extends PolygonShape{
 			else if(etatBarre == EtatBarre.finie){
 			}
 			else if(etatBarre == EtatBarre.decroissante){
-	    		longueur -= 2*speed*Gdx.graphics.getDeltaTime();
+	    		longueur -= 2 * speed * delta;
 	    		width = longueur;
 				polygonShape = new PolygonShape();
 		        polygonShape.setAsBox(width, height);
@@ -309,11 +309,11 @@ public class Barre extends PolygonShape{
 		}
 	}
 	
-	public void active(Array<Barre> array, Array<Point> points){
+	public void active(Array<Barre> array, Array<Point> points, float delta){
 		if("Barre".equals(barre1.getUserData()) || "Morte".equals(barre1.getUserData())){
-    		barre1.setActive(false);
-    		world.destroyBody(barre1);
-    		creationBarre(points);
+	    		barre1.setActive(false);
+	    		world.destroyBody(barre1);
+	    		creationBarre(points, delta);
     		
     		for(int i = 0; i < array.size; i++){
             	if(!array.get(i).visible){
