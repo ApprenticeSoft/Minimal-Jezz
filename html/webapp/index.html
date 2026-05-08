@@ -24,11 +24,15 @@
       overflow: hidden;
       background: #000;
     }
+    #embed-html.loading-shell {
+      background: #fff;
+    }
     #embed-html canvas {
       width: 100% !important;
       height: 100% !important;
       display: block;
       image-rendering: auto;
+      background: #fff;
     }
     canvas {
       outline: none;
@@ -37,6 +41,25 @@
   <script src="html/html.nocache.js"></script>
 </head>
 <body>
-<div id="embed-html"></div>
+<div id="embed-html" class="loading-shell"></div>
+<script>
+  (function () {
+    var embed = document.getElementById('embed-html');
+    if (!embed) return;
+
+    function clearLoadingShell() {
+      if (!embed.querySelector('canvas')) return false;
+      embed.classList.remove('loading-shell');
+      return true;
+    }
+
+    if (!clearLoadingShell()) {
+      var observer = new MutationObserver(function () {
+        if (clearLoadingShell()) observer.disconnect();
+      });
+      observer.observe(embed, { childList: true, subtree: true });
+    }
+  }());
+</script>
 </body>
 </html>
